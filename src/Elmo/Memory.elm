@@ -1,5 +1,7 @@
 module Elm.Memory exposing (..)
 
+import Array
+
 
 type alias Memory =
     Array Int
