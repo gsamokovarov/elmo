@@ -9,8 +9,7 @@ module Elm.Cpu exposing (..)
 
 
 type Interrupt
-    = None
-    | NMI
+    = NMI
     | IRQ
 
 
@@ -115,7 +114,7 @@ type alias Cpu =
     , x : Int
     , y : Int
     , p : Int
-    , interrupt : Interrupt
+    , interrupt : Maybe Interrupt
     , mode : AddressingMode
     , stall : Int
     , cycles : Int
@@ -127,7 +126,5 @@ step cpu =
     if cpu.stall > 0 then
         { cpu | stall = stall - 1 }
     else
-       -- TODO(genadi): Handle interrupts here.
-
-      inst = read cpu
-
+        -- TODO(genadi): Handle interrupts here.
+        cpu
