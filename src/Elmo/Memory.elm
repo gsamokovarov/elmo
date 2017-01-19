@@ -1,6 +1,6 @@
-module Elm.Memory exposing (..)
+module Elmo.Memory exposing (..)
 
-import Array
+import Array exposing (Array)
 
 
 type alias Memory =
@@ -12,11 +12,12 @@ initialize =
     Array.repeat 2048 0
 
 
-read : Int -> Memory
+read : Int -> Memory -> Int
 read address memory =
-    Array.get address memory
+    Maybe.withDefault 0 <|
+        Array.get address memory
 
 
-write : Int -> Int -> Memory
+write : Int -> Int -> Memory -> Memory
 write address value memory =
     Array.set address value memory
