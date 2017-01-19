@@ -1,4 +1,4 @@
-module Elm.Cpu exposing (..)
+module Elmo.Cpu exposing (..)
 
 {-| The NES Central Processing Unit was a variant of the 8-bit 6502 processor.
 
@@ -6,6 +6,8 @@ module Elm.Cpu exposing (..)
    sound, having a pAPU (psuedo-Audio Processing Unit). However, it lacks Binary
    Coded Decimal mode.
 -}
+
+import Elmo.Memory as Memory
 
 
 type Interrupt
@@ -124,7 +126,7 @@ type alias Cpu =
 step : Cpu -> Cpu
 step cpu =
     if cpu.stall > 0 then
-        { cpu | stall = stall - 1 }
+        { cpu | stall = cpu.stall - 1 }
     else
         -- TODO(genadi): Handle interrupts here.
         cpu
