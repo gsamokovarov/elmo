@@ -3,11 +3,11 @@ module Elmo.Cpu exposing (..)
 {-| The NES Central Processing Unit was a variant of the 8-bit 6502 processor.
 
    It's called 2A03 and it's based on the 6502. The chip knows how to handle
-   sound, having a pAPU (psuedo-Audio Processing Unit). However, it lacks Binary
-   Coded Decimal mode.
+   sound, having a pAPU (psuedo-Audio Processing Unit). However, it lacks
+   Binary Coded Decimal mode.
 -}
 
-import Elmo.Memory as Memory
+import Elmo.Memory exposing (Memory)
 
 
 type Interrupt
@@ -120,13 +120,13 @@ type alias Cpu =
     , mode : AddressingMode
     , stall : Int
     , cycles : Int
+    , memory : Memory
     }
 
 
-step : Cpu -> Cpu
-step cpu =
+step : ( Cpu, Memory ) -> ( Cpu, Memory )
+step ( cpu, memory ) =
     if cpu.stall > 0 then
-        { cpu | stall = cpu.stall - 1 }
+        ( { cpu | stall = cpu.stall - 1 }, memory )
     else
-        -- TODO(genadi): Handle interrupts here.
-        cpu
+        ( cpu, memory )
