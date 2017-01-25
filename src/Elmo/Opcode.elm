@@ -15,7 +15,6 @@ type AddressingMode
     | IndirectY
     | Immediate
     | Implied
-    | Relative
     | ZeroPage
     | ZeroPageX
     | ZeroPageY
