@@ -14,6 +14,7 @@ type AddressingMode
     | AbsoluteX
     | AbsoluteY
     | Accumulator
+    | Relative
     | Indirect
     | IndirectX
     | IndirectY
