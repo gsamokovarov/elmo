@@ -29,36 +29,44 @@ type alias Cpu =
     }
 
 
-step : Cpu -> Memory -> ( Cpu, Memory )
-step cpu memory =
-    if cpu.stall > 0 then
-        ( { cpu | stall = cpu.stall - 1 }
-        , memory
-        )
-    else
-        memory
-            |> Memory.read cpu.pc
-            |> Opcode.dispatch
-            |> process cpu memory
+type alias System =
+    { cpu : Cpu
+    , memory : Memory
+    }
 
 
-process : Cpu -> Memory -> Instruction -> ( Cpu, Memory )
-process cpu memory instruction =
+step : System -> System
+step system =
+    let
+        { cpu, memory } =
+            system
+    in
+        if cpu.stall > 0 then
+            { system | cpu = { cpu | stall = cpu.stall - 1 } }
+        else
+            memory
+                |> Memory.read cpu.pc
+                |> Opcode.dispatch
+                |> process system
+
+
+process : System -> Instruction -> System
+process system instruction =
     case instruction.label of
         NOP ->
-            nop cpu memory
+            nop system
 
         _ ->
-            ( cpu, memory )
+            system
 
 
 
 -- INSTRUCTION HANDLERS
 
 
-nop : Cpu -> Memory -> ( Cpu, Memory )
-nop cpu memory =
-    ( cpu, memory )
+nop : System -> System
+nop system =
+    system
 
 
 
@@ -68,18 +76,29 @@ nop cpu memory =
 {-| For a detailed look on how the 6502 stack works, go to:
 https://wiki.nesdev.com/w/index.php/Stack
 -}
-stackPush cpu memory value =
-    -- TODO(genadi): The stack is between 0x0100-0x01FF, make sure to keep it
-    -- around that length and handle overflow and underflows correctly.
-    ( { cpu | sp = cpu.sp - 1 }
-    , memory |> Memory.write cpu.sp value
-    )
+stackPush : System -> Int -> System
+stackPush system value =
+    let
+        { cpu, memory } =
+            system
+    in
+        -- TODO(genadi): The stack is between 0x0100-0x01FF, make sure to keep it
+        -- around that length and handle overflow and underflows correctly.
+        { system
+            | cpu = { cpu | sp = cpu.sp - 1 }
+            , memory = memory |> Memory.write cpu.sp value
+        }
 
 
 {-| For a detailed look on how the 6502 stack works, go to:
 https://wiki.nesdev.com/w/index.php/Stack
 -}
-stackPull cpu memory =
-    ( { cpu | sp = cpu.sp + 1 }
-    , memory |> Memory.read (cpu.sp + 1)
-    )
+stackPull : System -> ( System, Int )
+stackPull system =
+    let
+        { cpu, memory } =
+            system
+    in
+        ( { system | cpu = { cpu | sp = cpu.sp + 1 } }
+        , Memory.read (cpu.sp + 1) memory
+        )
