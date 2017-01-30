@@ -109,6 +109,7 @@ type alias Instruction =
     , opcode : Int
     , cycles : Int
     , pageCycles : Int
+    , branchPageCycles : Int
     }
 
 
@@ -116,457 +117,457 @@ dispatch : Int -> Instruction
 dispatch opcode =
     case opcode of
         0x00 ->
-            Instruction BRK Implied opcode 7 0
+            Instruction BRK Implied opcode 7 0 0
 
         0x01 ->
-            Instruction ORA IndirectX opcode 6 0
+            Instruction ORA IndirectX opcode 6 0 0
 
         0x05 ->
-            Instruction ORA ZeroPage opcode 3 0
+            Instruction ORA ZeroPage opcode 3 0 0
 
         0x06 ->
-            Instruction ASL ZeroPage opcode 5 0
+            Instruction ASL ZeroPage opcode 5 0 0
 
         0x08 ->
-            Instruction PHP Implied opcode 3 0
+            Instruction PHP Implied opcode 3 0 0
 
         0x09 ->
-            Instruction ORA Immediate opcode 2 0
+            Instruction ORA Immediate opcode 2 0 0
 
         0x0A ->
-            Instruction ASL Accumulator opcode 2 0
+            Instruction ASL Accumulator opcode 2 0 0
 
         0x0D ->
-            Instruction ORA Absolute opcode 4 0
+            Instruction ORA Absolute opcode 4 0 0
 
         0x0E ->
-            Instruction ASL Absolute opcode 6 0
+            Instruction ASL Absolute opcode 6 0 0
 
         0x10 ->
-            Instruction BPL Immediate opcode 2 0
+            Instruction BPL Immediate opcode 2 0 2
 
         0x11 ->
-            Instruction ORA IndirectY opcode 5 1
+            Instruction ORA IndirectY opcode 5 1 0
 
         0x15 ->
-            Instruction ORA ZeroPageX opcode 4 0
+            Instruction ORA ZeroPageX opcode 4 0 0
 
         0x16 ->
-            Instruction ASL ZeroPageX opcode 6 0
+            Instruction ASL ZeroPageX opcode 6 0 0
 
         0x18 ->
-            Instruction CLC Immediate opcode 2 0
+            Instruction CLC Immediate opcode 2 0 0
 
         0x19 ->
-            Instruction ORA AbsoluteY opcode 4 1
+            Instruction ORA AbsoluteY opcode 4 1 0
 
         0x1D ->
-            Instruction ORA AbsoluteX opcode 4 1
+            Instruction ORA AbsoluteX opcode 4 1 0
 
         0x1E ->
-            Instruction ASL AbsoluteX opcode 7 0
+            Instruction ASL AbsoluteX opcode 7 0 0
 
         0x20 ->
-            Instruction JSR Absolute opcode 6 0
+            Instruction JSR Absolute opcode 6 0 0
 
         0x21 ->
-            Instruction AND IndirectX opcode 6 0
+            Instruction AND IndirectX opcode 6 0 0
 
         0x24 ->
-            Instruction BIT ZeroPage opcode 3 0
+            Instruction BIT ZeroPage opcode 3 0 0
 
         0x25 ->
-            Instruction AND ZeroPage opcode 3 0
+            Instruction AND ZeroPage opcode 3 0 0
 
         0x26 ->
-            Instruction ROL ZeroPage opcode 5 0
+            Instruction ROL ZeroPage opcode 5 0 0
 
         0x28 ->
-            Instruction PLP Implied opcode 4 0
+            Instruction PLP Implied opcode 4 0 0
 
         0x29 ->
-            Instruction AND Immediate opcode 2 0
+            Instruction AND Immediate opcode 2 0 0
 
         0x2A ->
-            Instruction ROL Accumulator opcode 2 0
+            Instruction ROL Accumulator opcode 2 0 0
 
         0x2C ->
-            Instruction BIT Absolute opcode 4 0
+            Instruction BIT Absolute opcode 4 0 0
 
         0x2D ->
-            Instruction AND Absolute opcode 4 0
+            Instruction AND Absolute opcode 4 0 0
 
         0x2E ->
-            Instruction ROL Absolute opcode 6 0
+            Instruction ROL Absolute opcode 6 0 0
 
         0x30 ->
-            Instruction BMI Immediate opcode 2 0
+            Instruction BMI Immediate opcode 2 0 2
 
         0x31 ->
-            Instruction AND IndirectY opcode 5 1
+            Instruction AND IndirectY opcode 5 1 0
 
         0x35 ->
-            Instruction AND ZeroPageX opcode 4 0
+            Instruction AND ZeroPageX opcode 4 0 0
 
         0x36 ->
-            Instruction ROL ZeroPageX opcode 6 0
+            Instruction ROL ZeroPageX opcode 6 0 0
 
         0x38 ->
-            Instruction SEC Implied opcode 2 0
+            Instruction SEC Implied opcode 2 0 0
 
         0x39 ->
-            Instruction AND AbsoluteY opcode 4 1
+            Instruction AND AbsoluteY opcode 4 1 0
 
         0x3D ->
-            Instruction AND AbsoluteX opcode 4 1
+            Instruction AND AbsoluteX opcode 4 1 0
 
         0x3E ->
-            Instruction ROL AbsoluteX opcode 7 0
+            Instruction ROL AbsoluteX opcode 7 0 0
 
         0x40 ->
-            Instruction RTI Implied opcode 6 0
+            Instruction RTI Implied opcode 6 0 0
 
         0x41 ->
-            Instruction EOR IndirectX opcode 6 0
+            Instruction EOR IndirectX opcode 6 0 0
 
         0x45 ->
-            Instruction EOR ZeroPage opcode 3 0
+            Instruction EOR ZeroPage opcode 3 0 0
 
         0x46 ->
-            Instruction LSR ZeroPage opcode 5 0
+            Instruction LSR ZeroPage opcode 5 0 0
 
         0x48 ->
-            Instruction PHA Implied opcode 3 0
+            Instruction PHA Implied opcode 3 0 0
 
         0x49 ->
-            Instruction EOR Immediate opcode 2 0
+            Instruction EOR Immediate opcode 2 0 0
 
         0x4A ->
-            Instruction LSR Accumulator opcode 2 0
+            Instruction LSR Accumulator opcode 2 0 0
 
         0x4C ->
-            Instruction JMP Absolute opcode 3 0
+            Instruction JMP Absolute opcode 3 0 0
 
         0x4D ->
-            Instruction EOR Absolute opcode 4 0
+            Instruction EOR Absolute opcode 4 0 0
 
         0x4E ->
-            Instruction LSR Absolute opcode 6 0
+            Instruction LSR Absolute opcode 6 0 0
 
         0x50 ->
-            Instruction BVC Relative opcode 2 0
+            Instruction BVC Relative opcode 2 0 2
 
         0x51 ->
-            Instruction EOR IndirectY opcode 5 1
+            Instruction EOR IndirectY opcode 5 1 0
 
         0x55 ->
-            Instruction EOR ZeroPageX opcode 4 0
+            Instruction EOR ZeroPageX opcode 4 0 0
 
         0x56 ->
-            Instruction LSR ZeroPageX opcode 6 0
+            Instruction LSR ZeroPageX opcode 6 0 0
 
         0x58 ->
-            Instruction CLI Implied opcode 2 0
+            Instruction CLI Implied opcode 2 0 0
 
         0x59 ->
-            Instruction EOR AbsoluteY opcode 4 1
+            Instruction EOR AbsoluteY opcode 4 1 0
 
         0x5D ->
-            Instruction EOR AbsoluteX opcode 4 1
+            Instruction EOR AbsoluteX opcode 4 1 0
 
         0x5E ->
-            Instruction LSR AbsoluteX opcode 7 0
+            Instruction LSR AbsoluteX opcode 7 0 0
 
         0x60 ->
-            Instruction RTS Implied opcode 5 0
+            Instruction RTS Implied opcode 5 0 0
 
         0x61 ->
-            Instruction ADC IndirectX opcode 6 0
+            Instruction ADC IndirectX opcode 6 0 0
 
         0x65 ->
-            Instruction ADC ZeroPage opcode 3 0
+            Instruction ADC ZeroPage opcode 3 0 0
 
         0x66 ->
-            Instruction ROR ZeroPage opcode 5 0
+            Instruction ROR ZeroPage opcode 5 0 0
 
         0x68 ->
-            Instruction PLA Implied opcode 4 0
+            Instruction PLA Implied opcode 4 0 0
 
         0x69 ->
-            Instruction ADC Immediate opcode 2 0
+            Instruction ADC Immediate opcode 2 0 0
 
         0x6A ->
-            Instruction ROR Accumulator opcode 2 0
+            Instruction ROR Accumulator opcode 2 0 0
 
         0x6C ->
-            Instruction JMP Indirect opcode 5 0
+            Instruction JMP Indirect opcode 5 0 0
 
         0x6D ->
-            Instruction ADC Absolute opcode 4 0
+            Instruction ADC Absolute opcode 4 0 0
 
         0x6E ->
-            Instruction ROR Absolute opcode 6 0
+            Instruction ROR Absolute opcode 6 0 0
 
         0x70 ->
-            Instruction BVS Relative opcode 2 0
+            Instruction BVS Relative opcode 2 0 2
 
         0x71 ->
-            Instruction ADC IndirectY opcode 5 1
+            Instruction ADC IndirectY opcode 5 1 0
 
         0x75 ->
-            Instruction ADC ZeroPageX opcode 4 0
+            Instruction ADC ZeroPageX opcode 4 0 0
 
         0x76 ->
-            Instruction ROR ZeroPageX opcode 6 0
+            Instruction ROR ZeroPageX opcode 6 0 0
 
         0x78 ->
-            Instruction SEI Implied opcode 2 0
+            Instruction SEI Implied opcode 2 0 0
 
         0x79 ->
-            Instruction ADC AbsoluteY opcode 4 1
+            Instruction ADC AbsoluteY opcode 4 1 0
 
         0x7D ->
-            Instruction ADC AbsoluteX opcode 4 1
+            Instruction ADC AbsoluteX opcode 4 1 0
 
         0x7E ->
-            Instruction ROR AbsoluteX opcode 7 0
+            Instruction ROR AbsoluteX opcode 7 0 0
 
         0x81 ->
-            Instruction STA IndirectX opcode 6 0
+            Instruction STA IndirectX opcode 6 0 0
 
         0x84 ->
-            Instruction STY ZeroPage opcode 3 0
+            Instruction STY ZeroPage opcode 3 0 0
 
         0x85 ->
-            Instruction STA ZeroPage opcode 3 0
+            Instruction STA ZeroPage opcode 3 0 0
 
         0x86 ->
-            Instruction STX ZeroPage opcode 3 0
+            Instruction STX ZeroPage opcode 3 0 0
 
         0x88 ->
-            Instruction DEY Implied opcode 2 0
+            Instruction DEY Implied opcode 2 0 0
 
         0x8A ->
-            Instruction TXA Immediate opcode 2 0
+            Instruction TXA Immediate opcode 2 0 0
 
         0x8C ->
-            Instruction STY Absolute opcode 4 0
+            Instruction STY Absolute opcode 4 0 0
 
         0x8D ->
-            Instruction STA Absolute opcode 4 0
+            Instruction STA Absolute opcode 4 0 0
 
         0x8E ->
-            Instruction STX Absolute opcode 4 0
+            Instruction STX Absolute opcode 4 0 0
 
         0x90 ->
-            Instruction BCC Relative opcode 2 0
+            Instruction BCC Relative opcode 2 0 2
 
         0x91 ->
-            Instruction STA IndirectY opcode 6 0
+            Instruction STA IndirectY opcode 6 0 0
 
         0x94 ->
-            Instruction STY ZeroPageX opcode 4 0
+            Instruction STY ZeroPageX opcode 4 0 0
 
         0x95 ->
-            Instruction STA ZeroPageX opcode 4 0
+            Instruction STA ZeroPageX opcode 4 0 0
 
         0x96 ->
-            Instruction STX ZeroPageY opcode 4 0
+            Instruction STX ZeroPageY opcode 4 0 0
 
         0x98 ->
-            Instruction TYA Implied opcode 2 0
+            Instruction TYA Implied opcode 2 0 0
 
         0x99 ->
-            Instruction STA AbsoluteY opcode 5 0
+            Instruction STA AbsoluteY opcode 5 0 0
 
         0x9A ->
-            Instruction TXS Implied opcode 2 0
+            Instruction TXS Implied opcode 2 0 0
 
         0x9D ->
-            Instruction STA AbsoluteX opcode 5 0
+            Instruction STA AbsoluteX opcode 5 0 0
 
         0xA0 ->
-            Instruction LDY Immediate opcode 2 0
+            Instruction LDY Immediate opcode 2 0 0
 
         0xA1 ->
-            Instruction LDA IndirectX opcode 6 0
+            Instruction LDA IndirectX opcode 6 0 0
 
         0xA2 ->
-            Instruction LDX Immediate opcode 2 0
+            Instruction LDX Immediate opcode 2 0 0
 
         0xA4 ->
-            Instruction LDY ZeroPage opcode 3 0
+            Instruction LDY ZeroPage opcode 3 0 0
 
         0xA5 ->
-            Instruction LDA ZeroPage opcode 3 0
+            Instruction LDA ZeroPage opcode 3 0 0
 
         0xA6 ->
-            Instruction LDX ZeroPage opcode 3 0
+            Instruction LDX ZeroPage opcode 3 0 0
 
         0xA8 ->
-            Instruction TAY Implied opcode 2 0
+            Instruction TAY Implied opcode 2 0 0
 
         0xA9 ->
-            Instruction LDA Immediate opcode 2 0
+            Instruction LDA Immediate opcode 2 0 0
 
         0xAA ->
-            Instruction TAX Implied opcode 2 0
+            Instruction TAX Implied opcode 2 0 0
 
         0xAC ->
-            Instruction LDY Absolute opcode 4 0
+            Instruction LDY Absolute opcode 4 0 0
 
         0xAD ->
-            Instruction LDA Absolute opcode 4 0
+            Instruction LDA Absolute opcode 4 0 0
 
         0xAE ->
-            Instruction LDX Absolute opcode 4 0
+            Instruction LDX Absolute opcode 4 0 0
 
         0xB0 ->
-            Instruction BCS Relative opcode 2 0
+            Instruction BCS Relative opcode 2 0 2
 
         0xB1 ->
-            Instruction LDA IndirectY opcode 5 1
+            Instruction LDA IndirectY opcode 5 1 0
 
         0xB4 ->
-            Instruction LDY ZeroPageX opcode 4 0
+            Instruction LDY ZeroPageX opcode 4 0 0
 
         0xB5 ->
-            Instruction LDA ZeroPageX opcode 4 0
+            Instruction LDA ZeroPageX opcode 4 0 0
 
         0xB6 ->
-            Instruction LDX ZeroPageY opcode 4 0
+            Instruction LDX ZeroPageY opcode 4 0 0
 
         0xB8 ->
-            Instruction CLV Implied opcode 2 0
+            Instruction CLV Implied opcode 2 0 0
 
         0xB9 ->
-            Instruction LDA AbsoluteY opcode 4 1
+            Instruction LDA AbsoluteY opcode 4 1 0
 
         0xBA ->
-            Instruction TSX Implied opcode 2 0
+            Instruction TSX Implied opcode 2 0 0
 
         0xBC ->
-            Instruction LDY AbsoluteX opcode 4 1
+            Instruction LDY AbsoluteX opcode 4 1 0
 
         0xBD ->
-            Instruction LDA AbsoluteX opcode 4 1
+            Instruction LDA AbsoluteX opcode 4 1 0
 
         0xBE ->
-            Instruction LDX AbsoluteY opcode 4 1
+            Instruction LDX AbsoluteY opcode 4 1 0
 
         0xC0 ->
-            Instruction CPY Immediate opcode 2 0
+            Instruction CPY Immediate opcode 2 0 0
 
         0xC1 ->
-            Instruction CMP IndirectX opcode 6 0
+            Instruction CMP IndirectX opcode 6 0 0
 
         0xC4 ->
-            Instruction CPY ZeroPage opcode 3 0
+            Instruction CPY ZeroPage opcode 3 0 0
 
         0xC5 ->
-            Instruction CMP ZeroPage opcode 3 0
+            Instruction CMP ZeroPage opcode 3 0 0
 
         0xC6 ->
-            Instruction DEC ZeroPage opcode 5 0
+            Instruction DEC ZeroPage opcode 5 0 0
 
         0xC8 ->
-            Instruction INY Implied opcode 2 0
+            Instruction INY Implied opcode 2 0 0
 
         0xC9 ->
-            Instruction CMP Immediate opcode 2 0
+            Instruction CMP Immediate opcode 2 0 0
 
         0xCA ->
-            Instruction DEX Implied opcode 2 0
+            Instruction DEX Implied opcode 2 0 0
 
         0xCC ->
-            Instruction CPY Absolute opcode 4 0
+            Instruction CPY Absolute opcode 4 0 0
 
         0xCD ->
-            Instruction CMP Absolute opcode 4 0
+            Instruction CMP Absolute opcode 4 0 0
 
         0xCE ->
-            Instruction DEC Absolute opcode 6 0
+            Instruction DEC Absolute opcode 6 0 0
 
         0xD0 ->
-            Instruction BNE Immediate opcode 2 0
+            Instruction BNE Immediate opcode 2 0 2
 
         0xD1 ->
-            Instruction CMP IndirectY opcode 5 1
+            Instruction CMP IndirectY opcode 5 1 0
 
         0xD5 ->
-            Instruction CMP ZeroPageX opcode 4 0
+            Instruction CMP ZeroPageX opcode 4 0 0
 
         0xD6 ->
-            Instruction DEC ZeroPageX opcode 6 0
+            Instruction DEC ZeroPageX opcode 6 0 0
 
         0xD8 ->
-            Instruction CLD Immediate opcode 2 0
+            Instruction CLD Immediate opcode 2 0 0
 
         0xD9 ->
-            Instruction CMP AbsoluteY opcode 4 1
+            Instruction CMP AbsoluteY opcode 4 1 0
 
         0xDD ->
-            Instruction CMP AbsoluteX opcode 4 1
+            Instruction CMP AbsoluteX opcode 4 1 0
 
         0xDE ->
-            Instruction DEC AbsoluteX opcode 7 0
+            Instruction DEC AbsoluteX opcode 7 0 0
 
         0xE0 ->
-            Instruction CPX Immediate opcode 2 0
+            Instruction CPX Immediate opcode 2 0 0
 
         0xE1 ->
-            Instruction SBC IndirectX opcode 6 0
+            Instruction SBC IndirectX opcode 6 0 0
 
         0xE4 ->
-            Instruction CPX ZeroPage opcode 3 0
+            Instruction CPX ZeroPage opcode 3 0 0
 
         0xE5 ->
-            Instruction SBC ZeroPage opcode 3 0
+            Instruction SBC ZeroPage opcode 3 0 0
 
         0xE6 ->
-            Instruction INC ZeroPage opcode 5 0
+            Instruction INC ZeroPage opcode 5 0 0
 
         0xE8 ->
-            Instruction INX Implied opcode 2 0
+            Instruction INX Implied opcode 2 0 0
 
         0xE9 ->
-            Instruction SBC Immediate opcode 2 0
+            Instruction SBC Immediate opcode 2 0 0
 
         0xEA ->
-            Instruction NOP Immediate opcode 2 0
+            Instruction NOP Immediate opcode 2 0 0
 
         0xEC ->
-            Instruction CPX Absolute opcode 4 0
+            Instruction CPX Absolute opcode 4 0 0
 
         0xED ->
-            Instruction SBC Absolute opcode 4 0
+            Instruction SBC Absolute opcode 4 0 0
 
         0xEE ->
-            Instruction INC Absolute opcode 6 0
+            Instruction INC Absolute opcode 6 0 0
 
         0xF0 ->
-            Instruction BEQ Relative opcode 2 0
+            Instruction BEQ Relative opcode 2 0 2
 
         0xF1 ->
-            Instruction SBC IndirectY opcode 5 1
+            Instruction SBC IndirectY opcode 5 1 0
 
         0xF5 ->
-            Instruction SBC ZeroPageX opcode 4 0
+            Instruction SBC ZeroPageX opcode 4 0 0
 
         0xF6 ->
-            Instruction INC ZeroPageX opcode 6 0
+            Instruction INC ZeroPageX opcode 6 0 0
 
         0xF8 ->
-            Instruction SED Implied opcode 2 0
+            Instruction SED Implied opcode 2 0 0
 
         0xF9 ->
-            Instruction SBC AbsoluteY opcode 4 1
+            Instruction SBC AbsoluteY opcode 4 1 0
 
         0xFD ->
-            Instruction SBC AbsoluteX opcode 4 1
+            Instruction SBC AbsoluteX opcode 4 1 0
 
         0xFE ->
-            Instruction INC AbsoluteX opcode 7 0
+            Instruction INC AbsoluteX opcode 7 0 0
 
         _ ->
-            Instruction ILL Implied opcode 0 0
+            Instruction ILL Implied opcode 0 0 0
