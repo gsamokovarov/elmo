@@ -5,8 +5,8 @@ called 2A03. It can handle sound, having a pAPU (psuedo-Audio Processing
 Unit). However, it lacks Binary Coded Decimal mode.
 -}
 
-import Elmo.Memory exposing (Memory)
-import Elmo.Opcode exposing (..)
+import Elmo.Memory as Memory exposing (Memory)
+import Elmo.Opcode as Opcode exposing (AddressingMode, Instruction)
 
 
 type Interrupt
@@ -29,9 +29,17 @@ type alias Cpu =
     }
 
 
-step : ( Cpu, Memory ) -> ( Cpu, Memory )
-step ( cpu, memory ) =
+step : Cpu -> Memory -> ( Cpu, Memory )
+step cpu memory =
     if cpu.stall > 0 then
         ( { cpu | stall = cpu.stall - 1 }, memory )
     else
-        ( cpu, memory )
+        memory
+            |> Memory.read cpu.pc
+            |> Opcode.dispatch
+            |> process cpu memory
+
+
+process : Cpu -> Memory -> Instruction -> ( Cpu, Memory )
+process cpu memory instruction =
+    ( cpu, memory )
