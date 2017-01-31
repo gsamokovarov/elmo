@@ -1,6 +1,7 @@
 module Elmo.Memory exposing (..)
 
 import Array exposing (Array)
+import Bitwise
 
 
 type alias Memory =
@@ -16,6 +17,13 @@ read : Int -> Memory -> Int
 read address memory =
     Maybe.withDefault 0 <|
         Array.get address memory
+
+
+read16 : Int -> Memory -> Int
+read16 address memory =
+    Bitwise.or
+        (memory |> read (address + 1) |> Bitwise.shiftLeftBy 8)
+        (memory |> read address)
 
 
 write : Int -> Int -> Memory -> Memory
