@@ -6,7 +6,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 -}
 
 import Elmo.Memory as Memory exposing (Memory)
-import Elmo.Opcode as Opcode exposing (AddressingMode, Instruction, InstructionLabel(..))
+import Elmo.Opcode as Opcode exposing (AddressingMode, Opcode, Label(..))
 
 
 type Interrupt
@@ -46,7 +46,7 @@ step ({ cpu, memory } as system) =
             |> process system
 
 
-process : System -> Instruction -> System
+process : System -> Opcode -> System
 process system instruction =
     case instruction.label of
         NOP ->
