@@ -35,8 +35,8 @@ type alias System =
     }
 
 
-step : System -> System
-step ({ cpu, memory } as system) =
+tick : System -> System
+tick ({ cpu, memory } as system) =
     if cpu.stall > 0 then
         { system | cpu = { cpu | stall = cpu.stall - 1 } }
     else
