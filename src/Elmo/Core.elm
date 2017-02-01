@@ -40,9 +40,28 @@ tick ({ cpu, memory } as system) =
     if cpu.stall > 0 then
         { system | cpu = { cpu | stall = cpu.stall - 1 } }
     else
-        {- We still need to handle interrupts here. -}
-        dispatchInstruction system
-            |> processInstruction system
+        let
+            instruction =
+                dispatchInstruction system
+
+            newSystem =
+                { system
+                    | cpu =
+                        { cpu
+                            | pc = cpu.pc + instruction.bytes
+                            , cycles =
+                                cpu.cycles
+                                    + instruction.cycles
+                                    + (if instruction.pageCrossed then
+                                        instruction.pageCycles
+                                       else
+                                        0
+                                      )
+                        }
+                }
+        in
+            {- We still need to handle interrupts here. -}
+            instruction |> processInstruction newSystem
 
 
 
