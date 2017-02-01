@@ -189,6 +189,60 @@ processInstruction system instruction =
         NOP ->
             nop system
 
+        AHX ->
+            ahx system
+
+        ALR ->
+            alr system
+
+        ARR ->
+            arr system
+
+        AXS ->
+            axs system
+
+        DCP ->
+            dcp system
+
+        ILL ->
+            ill system
+
+        ISC ->
+            isc system
+
+        LAS ->
+            las system
+
+        LAX ->
+            lax system
+
+        RLA ->
+            rla system
+
+        RRA ->
+            rra system
+
+        SAX ->
+            sax system
+
+        SHX ->
+            shx system
+
+        SHY ->
+            shy system
+
+        SLO ->
+            slo system
+
+        SRE ->
+            sre system
+
+        TAS ->
+            tas system
+
+        XAA ->
+            xaa system
+
         _ ->
             system
 
@@ -212,6 +266,102 @@ augmentToInstruction { address, pageCrossed } opcode =
 
 nop : System -> System
 nop system =
+    system
+
+
+
+{- The following instructions are unused on the 2A03, but are still present on
+   the 6502.
+-}
+
+
+ahx : System -> System
+ahx system =
+    system
+
+
+alr : System -> System
+alr system =
+    system
+
+
+arr : System -> System
+arr system =
+    system
+
+
+axs : System -> System
+axs system =
+    system
+
+
+dcp : System -> System
+dcp system =
+    system
+
+
+ill : System -> System
+ill system =
+    system
+
+
+isc : System -> System
+isc system =
+    system
+
+
+las : System -> System
+las system =
+    system
+
+
+lax : System -> System
+lax system =
+    system
+
+
+rla : System -> System
+rla system =
+    system
+
+
+rra : System -> System
+rra system =
+    system
+
+
+sax : System -> System
+sax system =
+    system
+
+
+shx : System -> System
+shx system =
+    system
+
+
+shy : System -> System
+shy system =
+    system
+
+
+slo : System -> System
+slo system =
+    system
+
+
+sre : System -> System
+sre system =
+    system
+
+
+tas : System -> System
+tas system =
+    system
+
+
+xaa : System -> System
+xaa system =
     system
 
 
