@@ -26,6 +26,20 @@ read16 address memory =
         (memory |> read address)
 
 
+read16i : Int -> Memory -> Int
+read16i address memory =
+    let
+        unwrapped =
+            memory |> read16 address
+    in
+        Bitwise.or
+            (memory
+                |> read (Bitwise.or (Bitwise.and unwrapped 0xFF00) (unwrapped + 1))
+                |> Bitwise.shiftLeftBy 8
+            )
+            (memory |> read unwrapped)
+
+
 write : Int -> Int -> Memory -> Memory
 write address value memory =
     Array.set address value memory
