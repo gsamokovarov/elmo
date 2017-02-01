@@ -255,6 +255,7 @@ augmentToInstruction { address, pageCrossed } opcode =
     , cycles = opcode.cycles
     , pageCycles = opcode.pageCycles
     , branchPageCycles = opcode.branchPageCycles
+    , bytes = opcode.bytes
     , address = address
     , pageCrossed = pageCrossed
     }

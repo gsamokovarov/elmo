@@ -110,6 +110,7 @@ type alias Opcode =
     , cycles : Int
     , pageCycles : Int
     , branchPageCycles : Int
+    , bytes : Int
     }
 
 
@@ -117,457 +118,457 @@ dispatch : Int -> Opcode
 dispatch opcode =
     case opcode of
         0x00 ->
-            Opcode BRK Implied opcode 7 0 0
+            Opcode BRK Implied opcode 7 0 0 1
 
         0x01 ->
-            Opcode ORA IndirectX opcode 6 0 0
+            Opcode ORA IndirectX opcode 6 0 0 2
 
         0x05 ->
-            Opcode ORA ZeroPage opcode 3 0 0
+            Opcode ORA ZeroPage opcode 3 0 0 2
 
         0x06 ->
-            Opcode ASL ZeroPage opcode 5 0 0
+            Opcode ASL ZeroPage opcode 5 0 0 2
 
         0x08 ->
-            Opcode PHP Implied opcode 3 0 0
+            Opcode PHP Implied opcode 3 0 0 1
 
         0x09 ->
-            Opcode ORA Immediate opcode 2 0 0
+            Opcode ORA Immediate opcode 2 0 0 2
 
         0x0A ->
-            Opcode ASL Accumulator opcode 2 0 0
+            Opcode ASL Accumulator opcode 2 0 0 1
 
         0x0D ->
-            Opcode ORA Absolute opcode 4 0 0
+            Opcode ORA Absolute opcode 4 0 0 3
 
         0x0E ->
-            Opcode ASL Absolute opcode 6 0 0
+            Opcode ASL Absolute opcode 6 0 0 3
 
         0x10 ->
-            Opcode BPL Immediate opcode 2 0 2
+            Opcode BPL Immediate opcode 2 0 2 2
 
         0x11 ->
-            Opcode ORA IndirectY opcode 5 1 0
+            Opcode ORA IndirectY opcode 5 1 0 2
 
         0x15 ->
-            Opcode ORA ZeroPageX opcode 4 0 0
+            Opcode ORA ZeroPageX opcode 4 0 0 2
 
         0x16 ->
-            Opcode ASL ZeroPageX opcode 6 0 0
+            Opcode ASL ZeroPageX opcode 6 0 0 2
 
         0x18 ->
-            Opcode CLC Immediate opcode 2 0 0
+            Opcode CLC Immediate opcode 2 0 0 1
 
         0x19 ->
-            Opcode ORA AbsoluteY opcode 4 1 0
+            Opcode ORA AbsoluteY opcode 4 1 0 3
 
         0x1D ->
-            Opcode ORA AbsoluteX opcode 4 1 0
+            Opcode ORA AbsoluteX opcode 4 1 0 3
 
         0x1E ->
-            Opcode ASL AbsoluteX opcode 7 0 0
+            Opcode ASL AbsoluteX opcode 7 0 0 3
 
         0x20 ->
-            Opcode JSR Absolute opcode 6 0 0
+            Opcode JSR Absolute opcode 6 0 0 3
 
         0x21 ->
-            Opcode AND IndirectX opcode 6 0 0
+            Opcode AND IndirectX opcode 6 0 0 2
 
         0x24 ->
-            Opcode BIT ZeroPage opcode 3 0 0
+            Opcode BIT ZeroPage opcode 3 0 0 2
 
         0x25 ->
-            Opcode AND ZeroPage opcode 3 0 0
+            Opcode AND ZeroPage opcode 3 0 0 2
 
         0x26 ->
-            Opcode ROL ZeroPage opcode 5 0 0
+            Opcode ROL ZeroPage opcode 5 0 0 2
 
         0x28 ->
-            Opcode PLP Implied opcode 4 0 0
+            Opcode PLP Implied opcode 4 0 0 1
 
         0x29 ->
-            Opcode AND Immediate opcode 2 0 0
+            Opcode AND Immediate opcode 2 0 0 2
 
         0x2A ->
-            Opcode ROL Accumulator opcode 2 0 0
+            Opcode ROL Accumulator opcode 2 0 0 1
 
         0x2C ->
-            Opcode BIT Absolute opcode 4 0 0
+            Opcode BIT Absolute opcode 4 0 0 3
 
         0x2D ->
-            Opcode AND Absolute opcode 4 0 0
+            Opcode AND Absolute opcode 4 0 0 3
 
         0x2E ->
-            Opcode ROL Absolute opcode 6 0 0
+            Opcode ROL Absolute opcode 6 0 0 3
 
         0x30 ->
-            Opcode BMI Immediate opcode 2 0 2
+            Opcode BMI Immediate opcode 2 0 2 2
 
         0x31 ->
-            Opcode AND IndirectY opcode 5 1 0
+            Opcode AND IndirectY opcode 5 1 0 2
 
         0x35 ->
-            Opcode AND ZeroPageX opcode 4 0 0
+            Opcode AND ZeroPageX opcode 4 0 0 2
 
         0x36 ->
-            Opcode ROL ZeroPageX opcode 6 0 0
+            Opcode ROL ZeroPageX opcode 6 0 0 2
 
         0x38 ->
-            Opcode SEC Implied opcode 2 0 0
+            Opcode SEC Implied opcode 2 0 0 1
 
         0x39 ->
-            Opcode AND AbsoluteY opcode 4 1 0
+            Opcode AND AbsoluteY opcode 4 1 0 3
 
         0x3D ->
-            Opcode AND AbsoluteX opcode 4 1 0
+            Opcode AND AbsoluteX opcode 4 1 0 3
 
         0x3E ->
-            Opcode ROL AbsoluteX opcode 7 0 0
+            Opcode ROL AbsoluteX opcode 7 0 0 3
 
         0x40 ->
-            Opcode RTI Implied opcode 6 0 0
+            Opcode RTI Implied opcode 6 0 0 1
 
         0x41 ->
-            Opcode EOR IndirectX opcode 6 0 0
+            Opcode EOR IndirectX opcode 6 0 0 2
 
         0x45 ->
-            Opcode EOR ZeroPage opcode 3 0 0
+            Opcode EOR ZeroPage opcode 3 0 0 2
 
         0x46 ->
-            Opcode LSR ZeroPage opcode 5 0 0
+            Opcode LSR ZeroPage opcode 5 0 0 2
 
         0x48 ->
-            Opcode PHA Implied opcode 3 0 0
+            Opcode PHA Implied opcode 3 0 0 1
 
         0x49 ->
-            Opcode EOR Immediate opcode 2 0 0
+            Opcode EOR Immediate opcode 2 0 0 2
 
         0x4A ->
-            Opcode LSR Accumulator opcode 2 0 0
+            Opcode LSR Accumulator opcode 2 0 0 1
 
         0x4C ->
-            Opcode JMP Absolute opcode 3 0 0
+            Opcode JMP Absolute opcode 3 0 0 3
 
         0x4D ->
-            Opcode EOR Absolute opcode 4 0 0
+            Opcode EOR Absolute opcode 4 0 0 3
 
         0x4E ->
-            Opcode LSR Absolute opcode 6 0 0
+            Opcode LSR Absolute opcode 6 0 0 3
 
         0x50 ->
-            Opcode BVC Relative opcode 2 0 2
+            Opcode BVC Relative opcode 2 0 2 2
 
         0x51 ->
-            Opcode EOR IndirectY opcode 5 1 0
+            Opcode EOR IndirectY opcode 5 1 0 2
 
         0x55 ->
-            Opcode EOR ZeroPageX opcode 4 0 0
+            Opcode EOR ZeroPageX opcode 4 0 0 2
 
         0x56 ->
-            Opcode LSR ZeroPageX opcode 6 0 0
+            Opcode LSR ZeroPageX opcode 6 0 0 3
 
         0x58 ->
-            Opcode CLI Implied opcode 2 0 0
+            Opcode CLI Implied opcode 2 0 0 1
 
         0x59 ->
-            Opcode EOR AbsoluteY opcode 4 1 0
+            Opcode EOR AbsoluteY opcode 4 1 0 3
 
         0x5D ->
-            Opcode EOR AbsoluteX opcode 4 1 0
+            Opcode EOR AbsoluteX opcode 4 1 0 3
 
         0x5E ->
-            Opcode LSR AbsoluteX opcode 7 0 0
+            Opcode LSR AbsoluteX opcode 7 0 0 3
 
         0x60 ->
-            Opcode RTS Implied opcode 5 0 0
+            Opcode RTS Implied opcode 5 0 0 1
 
         0x61 ->
-            Opcode ADC IndirectX opcode 6 0 0
+            Opcode ADC IndirectX opcode 6 0 0 2
 
         0x65 ->
-            Opcode ADC ZeroPage opcode 3 0 0
+            Opcode ADC ZeroPage opcode 3 0 0 2
 
         0x66 ->
-            Opcode ROR ZeroPage opcode 5 0 0
+            Opcode ROR ZeroPage opcode 5 0 0 2
 
         0x68 ->
-            Opcode PLA Implied opcode 4 0 0
+            Opcode PLA Implied opcode 4 0 0 1
 
         0x69 ->
-            Opcode ADC Immediate opcode 2 0 0
+            Opcode ADC Immediate opcode 2 0 0 2
 
         0x6A ->
-            Opcode ROR Accumulator opcode 2 0 0
+            Opcode ROR Accumulator opcode 2 0 0 1
 
         0x6C ->
-            Opcode JMP Indirect opcode 5 0 0
+            Opcode JMP Indirect opcode 5 0 0 3
 
         0x6D ->
-            Opcode ADC Absolute opcode 4 0 0
+            Opcode ADC Absolute opcode 4 0 0 3
 
         0x6E ->
-            Opcode ROR Absolute opcode 6 0 0
+            Opcode ROR Absolute opcode 6 0 0 3
 
         0x70 ->
-            Opcode BVS Relative opcode 2 0 2
+            Opcode BVS Relative opcode 2 0 2 2
 
         0x71 ->
-            Opcode ADC IndirectY opcode 5 1 0
+            Opcode ADC IndirectY opcode 5 1 0 2
 
         0x75 ->
-            Opcode ADC ZeroPageX opcode 4 0 0
+            Opcode ADC ZeroPageX opcode 4 0 0 2
 
         0x76 ->
-            Opcode ROR ZeroPageX opcode 6 0 0
+            Opcode ROR ZeroPageX opcode 6 0 0 2
 
         0x78 ->
-            Opcode SEI Implied opcode 2 0 0
+            Opcode SEI Implied opcode 2 0 0 1
 
         0x79 ->
-            Opcode ADC AbsoluteY opcode 4 1 0
+            Opcode ADC AbsoluteY opcode 4 1 0 3
 
         0x7D ->
-            Opcode ADC AbsoluteX opcode 4 1 0
+            Opcode ADC AbsoluteX opcode 4 1 0 3
 
         0x7E ->
-            Opcode ROR AbsoluteX opcode 7 0 0
+            Opcode ROR AbsoluteX opcode 7 0 0 3
 
         0x81 ->
-            Opcode STA IndirectX opcode 6 0 0
+            Opcode STA IndirectX opcode 6 0 0 2
 
         0x84 ->
-            Opcode STY ZeroPage opcode 3 0 0
+            Opcode STY ZeroPage opcode 3 0 0 2
 
         0x85 ->
-            Opcode STA ZeroPage opcode 3 0 0
+            Opcode STA ZeroPage opcode 3 0 0 2
 
         0x86 ->
-            Opcode STX ZeroPage opcode 3 0 0
+            Opcode STX ZeroPage opcode 3 0 0 2
 
         0x88 ->
-            Opcode DEY Implied opcode 2 0 0
+            Opcode DEY Implied opcode 2 0 0 1
 
         0x8A ->
-            Opcode TXA Immediate opcode 2 0 0
+            Opcode TXA Immediate opcode 2 0 0 1
 
         0x8C ->
-            Opcode STY Absolute opcode 4 0 0
+            Opcode STY Absolute opcode 4 0 0 3
 
         0x8D ->
-            Opcode STA Absolute opcode 4 0 0
+            Opcode STA Absolute opcode 4 0 0 3
 
         0x8E ->
-            Opcode STX Absolute opcode 4 0 0
+            Opcode STX Absolute opcode 4 0 0 3
 
         0x90 ->
-            Opcode BCC Relative opcode 2 0 2
+            Opcode BCC Relative opcode 2 0 2 2
 
         0x91 ->
-            Opcode STA IndirectY opcode 6 0 0
+            Opcode STA IndirectY opcode 6 0 0 2
 
         0x94 ->
-            Opcode STY ZeroPageX opcode 4 0 0
+            Opcode STY ZeroPageX opcode 4 0 0 2
 
         0x95 ->
-            Opcode STA ZeroPageX opcode 4 0 0
+            Opcode STA ZeroPageX opcode 4 0 0 2
 
         0x96 ->
-            Opcode STX ZeroPageY opcode 4 0 0
+            Opcode STX ZeroPageY opcode 4 0 0 2
 
         0x98 ->
-            Opcode TYA Implied opcode 2 0 0
+            Opcode TYA Implied opcode 2 0 0 1
 
         0x99 ->
-            Opcode STA AbsoluteY opcode 5 0 0
+            Opcode STA AbsoluteY opcode 5 0 0 3
 
         0x9A ->
-            Opcode TXS Implied opcode 2 0 0
+            Opcode TXS Implied opcode 2 0 0 1
 
         0x9D ->
-            Opcode STA AbsoluteX opcode 5 0 0
+            Opcode STA AbsoluteX opcode 5 0 0 3
 
         0xA0 ->
-            Opcode LDY Immediate opcode 2 0 0
+            Opcode LDY Immediate opcode 2 0 0 2
 
         0xA1 ->
-            Opcode LDA IndirectX opcode 6 0 0
+            Opcode LDA IndirectX opcode 6 0 0 2
 
         0xA2 ->
-            Opcode LDX Immediate opcode 2 0 0
+            Opcode LDX Immediate opcode 2 0 0 2
 
         0xA4 ->
-            Opcode LDY ZeroPage opcode 3 0 0
+            Opcode LDY ZeroPage opcode 3 0 0 2
 
         0xA5 ->
-            Opcode LDA ZeroPage opcode 3 0 0
+            Opcode LDA ZeroPage opcode 3 0 0 2
 
         0xA6 ->
-            Opcode LDX ZeroPage opcode 3 0 0
+            Opcode LDX ZeroPage opcode 3 0 0 2
 
         0xA8 ->
-            Opcode TAY Implied opcode 2 0 0
+            Opcode TAY Implied opcode 2 0 0 1
 
         0xA9 ->
-            Opcode LDA Immediate opcode 2 0 0
+            Opcode LDA Immediate opcode 2 0 0 2
 
         0xAA ->
-            Opcode TAX Implied opcode 2 0 0
+            Opcode TAX Implied opcode 2 0 0 1
 
         0xAC ->
-            Opcode LDY Absolute opcode 4 0 0
+            Opcode LDY Absolute opcode 4 0 0 3
 
         0xAD ->
-            Opcode LDA Absolute opcode 4 0 0
+            Opcode LDA Absolute opcode 4 0 0 3
 
         0xAE ->
-            Opcode LDX Absolute opcode 4 0 0
+            Opcode LDX Absolute opcode 4 0 0 3
 
         0xB0 ->
-            Opcode BCS Relative opcode 2 0 2
+            Opcode BCS Relative opcode 2 0 2 2
 
         0xB1 ->
-            Opcode LDA IndirectY opcode 5 1 0
+            Opcode LDA IndirectY opcode 5 1 0 2
 
         0xB4 ->
-            Opcode LDY ZeroPageX opcode 4 0 0
+            Opcode LDY ZeroPageX opcode 4 0 0 2
 
         0xB5 ->
-            Opcode LDA ZeroPageX opcode 4 0 0
+            Opcode LDA ZeroPageX opcode 4 0 0 2
 
         0xB6 ->
-            Opcode LDX ZeroPageY opcode 4 0 0
+            Opcode LDX ZeroPageY opcode 4 0 0 2
 
         0xB8 ->
-            Opcode CLV Implied opcode 2 0 0
+            Opcode CLV Implied opcode 2 0 0 1
 
         0xB9 ->
-            Opcode LDA AbsoluteY opcode 4 1 0
+            Opcode LDA AbsoluteY opcode 4 1 0 3
 
         0xBA ->
-            Opcode TSX Implied opcode 2 0 0
+            Opcode TSX Implied opcode 2 0 0 1
 
         0xBC ->
-            Opcode LDY AbsoluteX opcode 4 1 0
+            Opcode LDY AbsoluteX opcode 4 1 0 3
 
         0xBD ->
-            Opcode LDA AbsoluteX opcode 4 1 0
+            Opcode LDA AbsoluteX opcode 4 1 0 3
 
         0xBE ->
-            Opcode LDX AbsoluteY opcode 4 1 0
+            Opcode LDX AbsoluteY opcode 4 1 0 3
 
         0xC0 ->
-            Opcode CPY Immediate opcode 2 0 0
+            Opcode CPY Immediate opcode 2 0 0 2
 
         0xC1 ->
-            Opcode CMP IndirectX opcode 6 0 0
+            Opcode CMP IndirectX opcode 6 0 0 2
 
         0xC4 ->
-            Opcode CPY ZeroPage opcode 3 0 0
+            Opcode CPY ZeroPage opcode 3 0 0 2
 
         0xC5 ->
-            Opcode CMP ZeroPage opcode 3 0 0
+            Opcode CMP ZeroPage opcode 3 0 0 2
 
         0xC6 ->
-            Opcode DEC ZeroPage opcode 5 0 0
+            Opcode DEC ZeroPage opcode 5 0 0 2
 
         0xC8 ->
-            Opcode INY Implied opcode 2 0 0
+            Opcode INY Implied opcode 2 0 0 1
 
         0xC9 ->
-            Opcode CMP Immediate opcode 2 0 0
+            Opcode CMP Immediate opcode 2 0 0 2
 
         0xCA ->
-            Opcode DEX Implied opcode 2 0 0
+            Opcode DEX Implied opcode 2 0 0 1
 
         0xCC ->
-            Opcode CPY Absolute opcode 4 0 0
+            Opcode CPY Absolute opcode 4 0 0 3
 
         0xCD ->
-            Opcode CMP Absolute opcode 4 0 0
+            Opcode CMP Absolute opcode 4 0 0 3
 
         0xCE ->
-            Opcode DEC Absolute opcode 6 0 0
+            Opcode DEC Absolute opcode 6 0 0 3
 
         0xD0 ->
-            Opcode BNE Immediate opcode 2 0 2
+            Opcode BNE Relative opcode 2 0 2 2
 
         0xD1 ->
-            Opcode CMP IndirectY opcode 5 1 0
+            Opcode CMP IndirectY opcode 5 1 0 2
 
         0xD5 ->
-            Opcode CMP ZeroPageX opcode 4 0 0
+            Opcode CMP ZeroPageX opcode 4 0 0 2
 
         0xD6 ->
-            Opcode DEC ZeroPageX opcode 6 0 0
+            Opcode DEC ZeroPageX opcode 6 0 0 2
 
         0xD8 ->
-            Opcode CLD Immediate opcode 2 0 0
+            Opcode CLD Implied opcode 2 0 0 1
 
         0xD9 ->
-            Opcode CMP AbsoluteY opcode 4 1 0
+            Opcode CMP AbsoluteY opcode 4 1 0 3
 
         0xDD ->
-            Opcode CMP AbsoluteX opcode 4 1 0
+            Opcode CMP AbsoluteX opcode 4 1 0 3
 
         0xDE ->
-            Opcode DEC AbsoluteX opcode 7 0 0
+            Opcode DEC AbsoluteX opcode 7 0 0 3
 
         0xE0 ->
-            Opcode CPX Immediate opcode 2 0 0
+            Opcode CPX Immediate opcode 2 0 0 2
 
         0xE1 ->
-            Opcode SBC IndirectX opcode 6 0 0
+            Opcode SBC IndirectX opcode 6 0 0 2
 
         0xE4 ->
-            Opcode CPX ZeroPage opcode 3 0 0
+            Opcode CPX ZeroPage opcode 3 0 0 2
 
         0xE5 ->
-            Opcode SBC ZeroPage opcode 3 0 0
+            Opcode SBC ZeroPage opcode 3 0 0 2
 
         0xE6 ->
-            Opcode INC ZeroPage opcode 5 0 0
+            Opcode INC ZeroPage opcode 5 0 0 2
 
         0xE8 ->
-            Opcode INX Implied opcode 2 0 0
+            Opcode INX Implied opcode 2 0 0 1
 
         0xE9 ->
-            Opcode SBC Immediate opcode 2 0 0
+            Opcode SBC Immediate opcode 2 0 0 2
 
         0xEA ->
-            Opcode NOP Immediate opcode 2 0 0
+            Opcode NOP Immediate opcode 2 0 0 1
 
         0xEC ->
-            Opcode CPX Absolute opcode 4 0 0
+            Opcode CPX Absolute opcode 4 0 0 3
 
         0xED ->
-            Opcode SBC Absolute opcode 4 0 0
+            Opcode SBC Absolute opcode 4 0 0 3
 
         0xEE ->
-            Opcode INC Absolute opcode 6 0 0
+            Opcode INC Absolute opcode 6 0 0 3
 
         0xF0 ->
-            Opcode BEQ Relative opcode 2 0 2
+            Opcode BEQ Relative opcode 2 0 2 2
 
         0xF1 ->
-            Opcode SBC IndirectY opcode 5 1 0
+            Opcode SBC IndirectY opcode 5 1 0 2
 
         0xF5 ->
-            Opcode SBC ZeroPageX opcode 4 0 0
+            Opcode SBC ZeroPageX opcode 4 0 0 2
 
         0xF6 ->
-            Opcode INC ZeroPageX opcode 6 0 0
+            Opcode INC ZeroPageX opcode 6 0 0 2
 
         0xF8 ->
-            Opcode SED Implied opcode 2 0 0
+            Opcode SED Implied opcode 2 0 0 1
 
         0xF9 ->
-            Opcode SBC AbsoluteY opcode 4 1 0
+            Opcode SBC AbsoluteY opcode 4 1 0 3
 
         0xFD ->
-            Opcode SBC AbsoluteX opcode 4 1 0
+            Opcode SBC AbsoluteX opcode 4 1 0 3
 
         0xFE ->
-            Opcode INC AbsoluteX opcode 7 0 0
+            Opcode INC AbsoluteX opcode 7 0 0 3
 
         _ ->
-            Opcode ILL Implied opcode 0 0 0
+            Opcode ILL Implied opcode 0 0 0 1
