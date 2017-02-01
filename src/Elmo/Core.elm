@@ -6,7 +6,8 @@ Unit). However, it lacks Binary Coded Decimal mode.
 -}
 
 import Elmo.Memory as Memory exposing (Memory)
-import Elmo.Opcode as Opcode exposing (AddressingMode, Opcode, Label(..))
+import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
+import Bitwise
 
 
 type Interrupt
@@ -22,7 +23,6 @@ type alias Cpu =
     , y : Int
     , p : Int
     , interrupt : Maybe Interrupt
-    , mode : AddressingMode
     , stall : Int
     , cycles : Int
     , memory : Memory
@@ -40,20 +40,170 @@ step ({ cpu, memory } as system) =
     if cpu.stall > 0 then
         { system | cpu = { cpu | stall = cpu.stall - 1 } }
     else
-        memory
-            |> Memory.read cpu.pc
-            |> Opcode.dispatch
-            |> process system
+        {- We still need to handle interrupts here. -}
+        dispatchInstruction system
+            |> processInstruction system
 
 
-process : System -> Opcode -> System
-process system instruction =
+
+-- INSTRUCTION
+
+
+type alias Instruction opcode =
+    { opcode
+        | address : Int
+        , pageCrossed : Bool
+    }
+
+
+dispatchInstruction : System -> Instruction Opcode
+dispatchInstruction { cpu, memory } =
+    let
+        pageCrossed : Int -> Int -> Bool
+        pageCrossed a b =
+            (Bitwise.and a 0xFF00) /= (Bitwise.and b 0xFF00)
+
+        opcode =
+            memory
+                |> Memory.read cpu.pc
+                |> Opcode.dispatch
+    in
+        case opcode.mode of
+            Implied ->
+                opcode
+                    |> augmentToInstruction
+                        { address = 0
+                        , pageCrossed = False
+                        }
+
+            Accumulator ->
+                opcode
+                    |> augmentToInstruction
+                        { address = 0
+                        , pageCrossed = False
+                        }
+
+            Immediate ->
+                opcode
+                    |> augmentToInstruction
+                        { address = cpu.pc + 1
+                        , pageCrossed = False
+                        }
+
+            ZeroPage ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read (cpu.pc + 1)
+                        , pageCrossed = False
+                        }
+
+            ZeroPageX ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.x)
+                        , pageCrossed = False
+                        }
+
+            ZeroPageY ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.y)
+                        , pageCrossed = False
+                        }
+
+            Absolute ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.x)
+                        , pageCrossed = False
+                        }
+
+            AbsoluteX ->
+                let
+                    address =
+                        memory |> Memory.read16 ((cpu.pc + 1) + cpu.x)
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = address
+                            , pageCrossed = pageCrossed (address - cpu.x) address
+                            }
+
+            AbsoluteY ->
+                let
+                    address =
+                        memory |> Memory.read16 ((cpu.pc + 1) + cpu.y)
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = address
+                            , pageCrossed = pageCrossed (address - cpu.y) address
+                            }
+
+            Relative ->
+                let
+                    offset =
+                        memory |> Memory.read (cpu.pc + 1)
+
+                    address =
+                        if offset < 0x80 then
+                            cpu.pc + 2 + offset
+                        else
+                            cpu.pc + 2 + offset - 0x0100
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = address
+                            , pageCrossed = False
+                            }
+
+            Indirect ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read16i (cpu.pc + 1)
+                        , pageCrossed = False
+                        }
+
+            IndirectX ->
+                opcode
+                    |> augmentToInstruction
+                        { address = memory |> Memory.read16i ((cpu.pc + 1) + cpu.x)
+                        , pageCrossed = False
+                        }
+
+            IndirectY ->
+                let
+                    address =
+                        memory |> Memory.read16i ((cpu.pc + 1) + cpu.y)
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = address
+                            , pageCrossed = pageCrossed (address - cpu.y) address
+                            }
+
+
+processInstruction : System -> Instruction Opcode -> System
+processInstruction system instruction =
     case instruction.label of
         NOP ->
             nop system
 
         _ ->
             system
+
+
+augmentToInstruction : { address : Int, pageCrossed : Bool } -> Opcode -> Instruction Opcode
+augmentToInstruction { address, pageCrossed } opcode =
+    { label = opcode.label
+    , mode = opcode.mode
+    , opcode = opcode.opcode
+    , cycles = opcode.cycles
+    , pageCycles = opcode.pageCycles
+    , branchPageCycles = opcode.branchPageCycles
+    , address = address
+    , pageCrossed = pageCrossed
+    }
 
 
 
