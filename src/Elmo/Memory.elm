@@ -28,16 +28,12 @@ read16 address memory =
 
 read16i : Int -> Memory -> Int
 read16i address memory =
-    let
-        unwrapped =
-            memory |> read16 address
-    in
-        Bitwise.or
-            (memory
-                |> read (Bitwise.or (Bitwise.and unwrapped 0xFF00) (unwrapped + 1))
-                |> Bitwise.shiftLeftBy 8
-            )
-            (memory |> read unwrapped)
+    Bitwise.or
+        (memory
+            |> read (Bitwise.or (Bitwise.and address 0xFF00) (address + 1))
+            |> Bitwise.shiftLeftBy 8
+        )
+        (memory |> read address)
 
 
 write : Int -> Int -> Memory -> Memory
