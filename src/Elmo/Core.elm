@@ -7,6 +7,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
+import Elmo.Math exposing ((|+|), (&&&), (|||))
 import Bitwise
 
 
@@ -80,7 +81,7 @@ dispatchInstruction { cpu, memory } =
     let
         pageCrossed : Int -> Int -> Bool
         pageCrossed a b =
-            (Bitwise.and a 0xFF00) /= (Bitwise.and b 0xFF00)
+            (a &&& 0xFF00) /= (b &&& 0xFF00)
 
         opcode =
             memory
@@ -177,27 +178,35 @@ dispatchInstruction { cpu, memory } =
                             }
 
             Indirect ->
-                opcode
-                    |> augmentToInstruction
-                        { address = memory |> Memory.read16i (cpu.pc + 1)
-                        , pageCrossed = False
-                        }
+                let
+                    address =
+                        memory |> Memory.read16 (cpu.pc + 1)
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = memory |> Memory.read16i address
+                            , pageCrossed = False
+                            }
 
             IndirectX ->
-                opcode
-                    |> augmentToInstruction
-                        { address = memory |> Memory.read16i ((cpu.pc + 1) + cpu.x)
-                        , pageCrossed = False
-                        }
+                let
+                    address =
+                        memory |> Memory.read ((cpu.pc + 1) |+| cpu.x)
+                in
+                    opcode
+                        |> augmentToInstruction
+                            { address = memory |> Memory.read16i address
+                            , pageCrossed = False
+                            }
 
             IndirectY ->
                 let
                     address =
-                        memory |> Memory.read16i ((cpu.pc + 1) + cpu.y)
+                        memory |> Memory.read ((cpu.pc + 1) + cpu.y)
                 in
                     opcode
                         |> augmentToInstruction
-                            { address = address
+                            { address = memory |> Memory.read16i address
                             , pageCrossed = pageCrossed (address - cpu.y) address
                             }
 

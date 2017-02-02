@@ -1,5 +1,6 @@
 module Elmo.Memory exposing (..)
 
+import Elmo.Math exposing ((|||), (&&&))
 import Array exposing (Array)
 import Bitwise
 
@@ -30,7 +31,7 @@ read16i : Int -> Memory -> Int
 read16i address memory =
     Bitwise.or
         (memory
-            |> read (Bitwise.or (Bitwise.and address 0xFF00) (address + 1))
+            |> read ((address &&& 0xFF00) ||| (address + 1))
             |> Bitwise.shiftLeftBy 8
         )
         (memory |> read address)
