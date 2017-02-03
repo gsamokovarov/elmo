@@ -50,19 +50,23 @@ tick ({ cpu, memory } as system) =
                     | cpu =
                         { cpu
                             | pc = cpu.pc + instruction.bytes
-                            , cycles =
-                                cpu.cycles
-                                    + instruction.cycles
-                                    + (if instruction.pageCrossed then
-                                        instruction.pageCycles
-                                       else
-                                        0
-                                      )
+                            , cycles = cpu |> updateCycles instruction
                         }
                 }
         in
             {- We still need to handle interrupts here. -}
             instruction |> processInstruction newSystem
+
+
+updateCycles : Instruction Opcode -> Cpu -> Int
+updateCycles instruction { cycles } =
+    cycles
+        + instruction.cycles
+        + (if instruction.pageCrossed then
+            instruction.pageCycles
+           else
+            0
+          )
 
 
 
