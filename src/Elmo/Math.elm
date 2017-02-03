@@ -19,22 +19,6 @@ infixl 4 &&&
 infixl 4 |||
 
 
-{-| 8-bit wrap around addition.
--}
-(|+|) : Int -> Int -> Int
-(|+|) a b =
-    Bitwise.and 0xFF (a + b)
-infixl 6 |+|
-
-
-{-| 8-bit wrap around addition.
--}
-(|-|) : Int -> Int -> Int
-(|-|) a b =
-    Bitwise.and 0xFF (a - b)
-infixl 6 |-|
-
-
 {-| Shift the number a with b bits to the left.
 -}
 (<<<) : Int -> Int -> Int

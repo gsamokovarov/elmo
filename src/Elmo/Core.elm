@@ -7,7 +7,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
-import Elmo.Math exposing ((|+|), (&&&), (|||))
+import Elmo.Math exposing ((&&&), (|||))
 import Bitwise
 
 
@@ -191,7 +191,7 @@ dispatchInstruction { cpu, memory } =
             IndirectX ->
                 let
                     address =
-                        memory |> Memory.read ((cpu.pc + 1) |+| cpu.x)
+                        memory |> Memory.read (0xFF &&& (cpu.pc + 1 + cpu.x))
                 in
                     opcode
                         |> augmentToInstruction
@@ -406,7 +406,7 @@ stackPush ({ cpu, memory } as system) value =
     -- TODO(genadi): The stack is between 0x0100-0x01FF, make sure to keep it
     -- around that length and handle overflow and underflows correctly.
     { system
-        | cpu = { cpu | sp = cpu.sp - 1 }
+        | cpu = { cpu | sp = 0x1FFF &&& (cpu.sp - 1) }
         , memory = memory |> Memory.write cpu.sp value
     }
 
@@ -416,6 +416,8 @@ https://wiki.nesdev.com/w/index.php/Stack
 -}
 stackPull : System -> ( System, Int )
 stackPull ({ cpu, memory } as system) =
-    ( { system | cpu = { cpu | sp = cpu.sp + 1 } }
+    ( { system
+        | cpu = { cpu | sp = 0x1FFF &&& (cpu.sp + 1) }
+      }
     , Memory.read (cpu.sp + 1) memory
     )
