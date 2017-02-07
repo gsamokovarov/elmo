@@ -26,7 +26,6 @@ type alias Cpu =
     , interrupt : Maybe Interrupt
     , stall : Int
     , cycles : Int
-    , memory : Memory
     }
 
 
