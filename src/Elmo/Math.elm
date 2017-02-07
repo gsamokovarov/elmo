@@ -30,15 +30,15 @@ import Bitwise
 {-| Shift the number a with b bits to the left.
 -}
 (<<<) : Int -> Int -> Int
-(<<<) a b =
-    Bitwise.shiftLeftBy b a
+(<<<) =
+    flip Bitwise.shiftLeftBy
 
 
 {-| Shift the number a with b bits to the left.
 -}
 (>>>) : Int -> Int -> Int
-(>>>) a b =
-    Bitwise.shiftRightBy b a
+(>>>) =
+    flip Bitwise.shiftRightBy
 
 
 
