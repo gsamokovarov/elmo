@@ -241,6 +241,9 @@ processInstruction system instruction =
         BMI ->
             instruction |> bmi system
 
+        BNE ->
+            instruction |> bne system
+
         NOP ->
             instruction |> nop system
 
@@ -494,6 +497,25 @@ bit ({ cpu, memory } as system) { address } =
 bmi : System -> Instruction -> System
 bmi ({ cpu } as system) { address, branchPageCycles } =
     if (cpu.p &&& Flags.sign) == Flags.sign then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + count (pageCrossed cpu.pc address)
+                }
+        }
+    else
+        system
+
+
+{-| Branch on result not zero.
+-}
+bne : System -> Instruction -> System
+bne ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& Flags.sign) == 0 then
         { system
             | cpu =
                 { cpu
