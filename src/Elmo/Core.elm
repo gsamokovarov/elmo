@@ -238,6 +238,9 @@ processInstruction system instruction =
         ASL ->
             instruction |> asl system
 
+        BCC ->
+            instruction |> bcc system
+
         NOP ->
             instruction |> nop system
 
@@ -407,6 +410,22 @@ asl ({ cpu, memory } as system) { mode, address } =
                     , memory =
                         memory |> Memory.write address (value <<< 1)
                 }
+
+
+{-| Branch if no carry flag is set.
+-}
+bcc : System -> Instruction -> System
+bcc ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& 1) == 0 then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles = cpu.cycles + branchPageCycles
+                }
+        }
+    else
+        system
 
 
 {-| No-operation instruction.
