@@ -232,6 +232,9 @@ processInstruction system instruction =
         ADC ->
             instruction |> adc system
 
+        AND ->
+            instruction |> and system
+
         NOP ->
             instruction |> nop system
 
@@ -343,6 +346,25 @@ adc ({ cpu, memory } as system) { address } =
                 |> Flags.setZero (sum == 0)
                 |> Flags.setCarry (sum > 0xFF)
                 |> Flags.setOverflow overflow
+    in
+        { system | cpu = { cpu | a = accumulator, p = flags } }
+
+
+{-| Logical and with memory address and accumulator.
+-}
+and : System -> Instruction -> System
+and ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        accumulator =
+            cpu.a &&& value
+
+        flags =
+            cpu.p
+                |> Flags.setSign ((accumulator &&& 0x80) /= 0)
+                |> Flags.setZero (accumulator == 0)
     in
         { system | cpu = { cpu | a = accumulator, p = flags } }
 
