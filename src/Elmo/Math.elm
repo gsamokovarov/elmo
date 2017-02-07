@@ -19,6 +19,14 @@ infixl 4 &&&
 infixl 4 |||
 
 
+{-| Bitwise logical or operation.
+-}
+(^^^) : Int -> Int -> Int
+(^^^) =
+    Bitwise.xor
+infixl 4 ^^^
+
+
 {-| Shift the number a with b bits to the left.
 -}
 (<<<) : Int -> Int -> Int
