@@ -229,6 +229,9 @@ processInstruction system instruction =
         BCC ->
             instruction |> bcc system
 
+        BCS ->
+            instruction |> bcs system
+
         NOP ->
             instruction |> nop system
 
@@ -405,6 +408,25 @@ asl ({ cpu, memory } as system) { mode, address } =
 bcc : System -> Instruction -> System
 bcc ({ cpu } as system) { address, branchPageCycles } =
     if (cpu.p &&& 1) == 0 then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + count (pageCrossed cpu.pc address)
+                }
+        }
+    else
+        system
+
+
+{-| Branch if carry flag is set.
+-}
+bcs : System -> Instruction -> System
+bcs ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& 1) == 1 then
         { system
             | cpu =
                 { cpu
