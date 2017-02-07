@@ -235,6 +235,9 @@ processInstruction system instruction =
         BEQ ->
             instruction |> beq system
 
+        BIT ->
+            instruction |> bit system
+
         NOP ->
             instruction |> nop system
 
@@ -461,6 +464,26 @@ beq ({ cpu } as system) { address, branchPageCycles } =
         }
     else
         system
+
+
+{-| Test bits in memory with accumulator.
+-}
+bit : System -> Instruction -> System
+bit ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setOverflow ((0x40 &&& value) == 0x40)
+                            |> Flags.setZero (value &&& cpu.a)
+                }
+        }
 
 
 {-| No-operation instruction.
