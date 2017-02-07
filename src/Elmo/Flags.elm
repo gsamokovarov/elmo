@@ -42,9 +42,9 @@ zero =
     2
 
 
-setZero : Bool -> Int -> Int
-setZero =
-    setBit zero
+setZero : Int -> Int -> Int
+setZero value =
+    setBit zero (value == 0)
 
 
 interrupt : Int
