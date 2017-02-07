@@ -13,7 +13,7 @@ module Elmo.Flags exposing (..)
     See docs/6502.txt for more details on the role of each of the flags above.
 -}
 
-import Elmo.Math exposing ((|||))
+import Elmo.Math exposing ((|||), (^^^))
 
 
 init : Int
@@ -107,4 +107,4 @@ setBit bit trigger flags =
     if trigger then
         flags ||| bit
     else
-        flags
+        flags &&& (0xFF ^^^ bit)
