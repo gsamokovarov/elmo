@@ -7,7 +7,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
-import Elmo.Flags as Flags exposing (..)
+import Elmo.Flags as Flags
 import Elmo.Math exposing ((&&&), (|||), (^^^), (<<<))
 import Bitwise
 
