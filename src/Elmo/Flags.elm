@@ -92,9 +92,9 @@ sign =
     128
 
 
-setSign : Bool -> Int -> Int
-setSign =
-    setBit sign
+setSign : Int -> Int -> Int
+setSign value =
+    setBit sign ((value &&& sign) /= 0)
 
 
 

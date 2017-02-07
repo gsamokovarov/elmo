@@ -345,7 +345,7 @@ adc ({ cpu, memory } as system) { address } =
 
         flags =
             cpu.p
-                |> Flags.setSign ((accumulator &&& 0x80) /= 0)
+                |> Flags.setSign accumulator
                 |> Flags.setZero sum
                 |> Flags.setCarry (sum > 0xFF)
                 |> Flags.setOverflow overflow
@@ -366,7 +366,7 @@ and ({ cpu, memory } as system) { address } =
 
         flags =
             cpu.p
-                |> Flags.setSign ((accumulator &&& 0x80) /= 0)
+                |> Flags.setSign accumulator
                 |> Flags.setZero accumulator
     in
         { system | cpu = { cpu | a = accumulator, p = flags } }
@@ -385,7 +385,7 @@ asl ({ cpu, memory } as system) { mode, address } =
                         , p =
                             cpu.p
                                 |> Flags.setCarry ((cpu.a &&& 0x80) == 0x80)
-                                |> Flags.setSign ((cpu.a &&& 0x80) /= 0)
+                                |> Flags.setSign cpu.a
                                 |> Flags.setZero cpu.a
                     }
             }
@@ -401,7 +401,7 @@ asl ({ cpu, memory } as system) { mode, address } =
                             | p =
                                 cpu.p
                                     |> Flags.setCarry ((value &&& 0x80) == 0x80)
-                                    |> Flags.setSign ((value &&& 0x80) /= 0)
+                                    |> Flags.setSign value
                                     |> Flags.setZero value
                         }
                     , memory =
