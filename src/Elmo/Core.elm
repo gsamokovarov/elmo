@@ -8,7 +8,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
 import Elmo.Flags as Flags exposing (..)
-import Elmo.Math exposing ((&&&), (|||), (^^^))
+import Elmo.Math exposing ((&&&), (|||), (^^^), (<<<))
 import Bitwise
 
 
@@ -235,6 +235,9 @@ processInstruction system instruction =
         AND ->
             instruction |> and system
 
+        ASL ->
+            instruction |> asl system
+
         NOP ->
             instruction |> nop system
 
@@ -367,6 +370,43 @@ and ({ cpu, memory } as system) { address } =
                 |> Flags.setZero (accumulator == 0)
     in
         { system | cpu = { cpu | a = accumulator, p = flags } }
+
+
+{-| Shift Left One Bit (Memory or Accumulator).
+-}
+asl : System -> Instruction -> System
+asl ({ cpu, memory } as system) { mode, address } =
+    case mode of
+        Accumulator ->
+            { system
+                | cpu =
+                    { cpu
+                        | a = cpu.a <<< 1
+                        , p =
+                            cpu.p
+                                |> Flags.setCarry ((cpu.a &&& 0x80) == 0x80)
+                                |> Flags.setSign ((cpu.a &&& 0x80) /= 0)
+                                |> Flags.setZero (cpu.a == 0)
+                    }
+            }
+
+        _ ->
+            let
+                value =
+                    memory |> Memory.read address
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | p =
+                                cpu.p
+                                    |> Flags.setCarry ((value &&& 0x80) == 0x80)
+                                    |> Flags.setSign ((value &&& 0x80) /= 0)
+                                    |> Flags.setZero (value == 0)
+                        }
+                    , memory =
+                        memory |> Memory.write address (value <<< 1)
+                }
 
 
 nop : System -> Instruction -> System
