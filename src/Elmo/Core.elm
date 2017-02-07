@@ -65,7 +65,7 @@ tick ({ cpu, memory } as system) =
             instruction |> processInstruction newSystem
 
 
-updateCycles : Instruction Opcode -> Cpu -> Int
+updateCycles : Instruction -> Cpu -> Int
 updateCycles instruction { cycles } =
     cycles
         + instruction.cycles
@@ -80,14 +80,18 @@ updateCycles instruction { cycles } =
 -- INSTRUCTION
 
 
-type alias Instruction opcode =
+type alias RuntimeAugmentation opcode =
     { opcode
         | address : Int
         , pageCrossed : Bool
     }
 
 
-dispatchInstruction : System -> Instruction Opcode
+type alias Instruction =
+    RuntimeAugmentation Opcode
+
+
+dispatchInstruction : System -> Instruction
 dispatchInstruction { cpu, memory } =
     let
         pageCrossed : Int -> Int -> Bool
@@ -222,7 +226,7 @@ dispatchInstruction { cpu, memory } =
                             }
 
 
-processInstruction : System -> Instruction Opcode -> System
+processInstruction : System -> Instruction -> System
 processInstruction system instruction =
     case instruction.label of
         ADC ->
@@ -289,7 +293,7 @@ processInstruction system instruction =
             system
 
 
-augmentToInstruction : { address : Int, pageCrossed : Bool } -> Opcode -> Instruction Opcode
+augmentToInstruction : { address : Int, pageCrossed : Bool } -> Opcode -> Instruction
 augmentToInstruction { address, pageCrossed } opcode =
     { label = opcode.label
     , mode = opcode.mode
@@ -318,7 +322,7 @@ Overflow can be computed simply in C++ from the inputs and the result. Overflow
 occurs if (M^result)&(N^result)&0x80 is nonzero. That is, if the sign of both
 inputs is different from the sign of the result.
 -}
-adc : System -> Instruction Opcode -> System
+adc : System -> Instruction -> System
 adc ({ cpu, memory } as system) { address } =
     let
         value =
@@ -343,7 +347,7 @@ adc ({ cpu, memory } as system) { address } =
         { system | cpu = { cpu | a = accumulator, p = flags } }
 
 
-nop : System -> Instruction Opcode -> System
+nop : System -> Instruction -> System
 nop system instruction =
     system
 
@@ -354,92 +358,92 @@ nop system instruction =
 -}
 
 
-ahx : System -> Instruction Opcode -> System
+ahx : System -> Instruction -> System
 ahx system instruction =
     system
 
 
-alr : System -> Instruction Opcode -> System
+alr : System -> Instruction -> System
 alr system instruction =
     system
 
 
-arr : System -> Instruction Opcode -> System
+arr : System -> Instruction -> System
 arr system instruction =
     system
 
 
-axs : System -> Instruction Opcode -> System
+axs : System -> Instruction -> System
 axs system instruction =
     system
 
 
-dcp : System -> Instruction Opcode -> System
+dcp : System -> Instruction -> System
 dcp system instruction =
     system
 
 
-ill : System -> Instruction Opcode -> System
+ill : System -> Instruction -> System
 ill system instruction =
     system
 
 
-isc : System -> Instruction Opcode -> System
+isc : System -> Instruction -> System
 isc system instruction =
     system
 
 
-las : System -> Instruction Opcode -> System
+las : System -> Instruction -> System
 las system instruction =
     system
 
 
-lax : System -> Instruction Opcode -> System
+lax : System -> Instruction -> System
 lax system instruction =
     system
 
 
-rla : System -> Instruction Opcode -> System
+rla : System -> Instruction -> System
 rla system instruction =
     system
 
 
-rra : System -> Instruction Opcode -> System
+rra : System -> Instruction -> System
 rra system instruction =
     system
 
 
-sax : System -> Instruction Opcode -> System
+sax : System -> Instruction -> System
 sax system instruction =
     system
 
 
-shx : System -> Instruction Opcode -> System
+shx : System -> Instruction -> System
 shx system instruction =
     system
 
 
-shy : System -> Instruction Opcode -> System
+shy : System -> Instruction -> System
 shy system instruction =
     system
 
 
-slo : System -> Instruction Opcode -> System
+slo : System -> Instruction -> System
 slo system instruction =
     system
 
 
-sre : System -> Instruction Opcode -> System
+sre : System -> Instruction -> System
 sre system instruction =
     system
 
 
-tas : System -> Instruction Opcode -> System
+tas : System -> Instruction -> System
 tas system instruction =
     system
 
 
-xaa : System -> Instruction Opcode -> System
+xaa : System -> Instruction -> System
 xaa system instruction =
     system
 
