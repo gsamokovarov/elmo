@@ -2,18 +2,17 @@ module Elmo.Flags exposing (..)
 
 {-| This module provide utilities for working with the status register.
 
-    The register consists of eight flags.  Bits of this register
+    The register consists of eight flags. Bits of this register
     are altered depending on the result of arithmetic and logical operations.
     These bits are described below:
 
     7   6   5   4   3   2   1   0
     S   V       B   D   I   Z   C
 
-
     See docs/6502.txt for more details on the role of each of the flags above.
 -}
 
-import Elmo.Math exposing ((|||), (^^^))
+import Elmo.Math exposing ((|||), (&&&), (^^^))
 
 
 init : Int

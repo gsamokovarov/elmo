@@ -7,8 +7,22 @@ Unit). However, it lacks Binary Coded Decimal mode.
 
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
-import Elmo.Math exposing ((&&&), (|||))
+import Elmo.Flags as Flags exposing (..)
+import Elmo.Math exposing ((&&&), (|||), (^^^))
 import Bitwise
+
+
+-- SYSTEM
+
+
+type alias System =
+    { cpu : Cpu
+    , memory : Memory
+    }
+
+
+
+-- CPU
 
 
 type Interrupt
@@ -26,12 +40,6 @@ type alias Cpu =
     , interrupt : Maybe Interrupt
     , stall : Int
     , cycles : Int
-    }
-
-
-type alias System =
-    { cpu : Cpu
-    , memory : Memory
     }
 
 
@@ -84,7 +92,7 @@ dispatchInstruction { cpu, memory } =
     let
         pageCrossed : Int -> Int -> Bool
         pageCrossed a b =
-            (a &&& 0xFF00) /= (b &&& 0xFF00)
+            (0xFF00 &&& a) /= (0xFF00 &&& b)
 
         opcode =
             memory
@@ -217,62 +225,65 @@ dispatchInstruction { cpu, memory } =
 processInstruction : System -> Instruction Opcode -> System
 processInstruction system instruction =
     case instruction.label of
+        ADC ->
+            instruction |> adc system
+
         NOP ->
-            nop system
+            instruction |> nop system
 
         AHX ->
-            ahx system
+            instruction |> ahx system
 
         ALR ->
-            alr system
+            instruction |> alr system
 
         ARR ->
-            arr system
+            instruction |> arr system
 
         AXS ->
-            axs system
+            instruction |> axs system
 
         DCP ->
-            dcp system
+            instruction |> dcp system
 
         ILL ->
-            ill system
+            instruction |> ill system
 
         ISC ->
-            isc system
+            instruction |> isc system
 
         LAS ->
-            las system
+            instruction |> las system
 
         LAX ->
-            lax system
+            instruction |> lax system
 
         RLA ->
-            rla system
+            instruction |> rla system
 
         RRA ->
-            rra system
+            instruction |> rra system
 
         SAX ->
-            sax system
+            instruction |> sax system
 
         SHX ->
-            shx system
+            instruction |> shx system
 
         SHY ->
-            shy system
+            instruction |> shy system
 
         SLO ->
-            slo system
+            instruction |> slo system
 
         SRE ->
-            sre system
+            instruction |> sre system
 
         TAS ->
-            tas system
+            instruction |> tas system
 
         XAA ->
-            xaa system
+            instruction |> xaa system
 
         _ ->
             system
@@ -296,8 +307,44 @@ augmentToInstruction { address, pageCrossed } opcode =
 -- INSTRUCTION HANDLERS
 
 
-nop : System -> System
-nop system =
+{-| Add accumulator with carry.
+
+See http://www.righto.com/2012/12/the-6502-overflow-flag-explained.html on how
+to handle overflows correctly.
+
+Citing the article above:
+
+Overflow can be computed simply in C++ from the inputs and the result. Overflow
+occurs if (M^result)&(N^result)&0x80 is nonzero. That is, if the sign of both
+inputs is different from the sign of the result.
+-}
+adc : System -> Instruction Opcode -> System
+adc ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        sum =
+            cpu.a + value + (cpu.p &&& Flags.carry)
+
+        accumulator =
+            0xFF &&& sum
+
+        overflow =
+            ((cpu.a ^^^ sum) &&& (value ^^^ sum) &&& 0x80) /= 0
+
+        flags =
+            cpu.p
+                |> Flags.setSign (sum < 0)
+                |> Flags.setZero (sum == 0)
+                |> Flags.setCarry (sum > 0xFF)
+                |> Flags.setOverflow overflow
+    in
+        { system | cpu = { cpu | a = accumulator, p = flags } }
+
+
+nop : System -> Instruction Opcode -> System
+nop system instruction =
     system
 
 
@@ -307,93 +354,93 @@ nop system =
 -}
 
 
-ahx : System -> System
-ahx system =
+ahx : System -> Instruction Opcode -> System
+ahx system instruction =
     system
 
 
-alr : System -> System
-alr system =
+alr : System -> Instruction Opcode -> System
+alr system instruction =
     system
 
 
-arr : System -> System
-arr system =
+arr : System -> Instruction Opcode -> System
+arr system instruction =
     system
 
 
-axs : System -> System
-axs system =
+axs : System -> Instruction Opcode -> System
+axs system instruction =
     system
 
 
-dcp : System -> System
-dcp system =
+dcp : System -> Instruction Opcode -> System
+dcp system instruction =
     system
 
 
-ill : System -> System
-ill system =
+ill : System -> Instruction Opcode -> System
+ill system instruction =
     system
 
 
-isc : System -> System
-isc system =
+isc : System -> Instruction Opcode -> System
+isc system instruction =
     system
 
 
-las : System -> System
-las system =
+las : System -> Instruction Opcode -> System
+las system instruction =
     system
 
 
-lax : System -> System
-lax system =
+lax : System -> Instruction Opcode -> System
+lax system instruction =
     system
 
 
-rla : System -> System
-rla system =
+rla : System -> Instruction Opcode -> System
+rla system instruction =
     system
 
 
-rra : System -> System
-rra system =
+rra : System -> Instruction Opcode -> System
+rra system instruction =
     system
 
 
-sax : System -> System
-sax system =
+sax : System -> Instruction Opcode -> System
+sax system instruction =
     system
 
 
-shx : System -> System
-shx system =
+shx : System -> Instruction Opcode -> System
+shx system instruction =
     system
 
 
-shy : System -> System
-shy system =
+shy : System -> Instruction Opcode -> System
+shy system instruction =
     system
 
 
-slo : System -> System
-slo system =
+slo : System -> Instruction Opcode -> System
+slo system instruction =
     system
 
 
-sre : System -> System
-sre system =
+sre : System -> Instruction Opcode -> System
+sre system instruction =
     system
 
 
-tas : System -> System
-tas system =
+tas : System -> Instruction Opcode -> System
+tas system instruction =
     system
 
 
-xaa : System -> System
-xaa system =
+xaa : System -> Instruction Opcode -> System
+xaa system instruction =
     system
 
 
