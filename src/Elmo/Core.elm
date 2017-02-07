@@ -238,6 +238,9 @@ processInstruction system instruction =
         BIT ->
             instruction |> bit system
 
+        BMI ->
+            instruction |> bmi system
+
         NOP ->
             instruction |> nop system
 
@@ -432,7 +435,7 @@ bcc ({ cpu } as system) { address, branchPageCycles } =
 -}
 bcs : System -> Instruction -> System
 bcs ({ cpu } as system) { address, branchPageCycles } =
-    if (cpu.p &&& Flags.carry) == 1 then
+    if (cpu.p &&& Flags.carry) == Flags.carry then
         { system
             | cpu =
                 { cpu
@@ -451,7 +454,7 @@ bcs ({ cpu } as system) { address, branchPageCycles } =
 -}
 beq : System -> Instruction -> System
 beq ({ cpu } as system) { address, branchPageCycles } =
-    if (cpu.p &&& Flags.zero) == 1 then
+    if (cpu.p &&& Flags.zero) == Flags.zero then
         { system
             | cpu =
                 { cpu
@@ -484,6 +487,25 @@ bit ({ cpu, memory } as system) { address } =
                             |> Flags.setZero (value &&& cpu.a)
                 }
         }
+
+
+{-| Branch on result minus.
+-}
+bmi : System -> Instruction -> System
+bmi ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& Flags.sign) == Flags.sign then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + count (pageCrossed cpu.pc address)
+                }
+        }
+    else
+        system
 
 
 {-| No-operation instruction.
