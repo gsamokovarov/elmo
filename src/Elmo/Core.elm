@@ -58,7 +58,7 @@ tick ({ cpu, memory } as system) =
                         { cpu
                             | pc = cpu.pc + instruction.bytes
                             , cycles =
-                                cycles
+                                cpu.cycles
                                     + instruction.cycles
                                     + (count instruction.pageCrossed)
                         }
@@ -66,13 +66,6 @@ tick ({ cpu, memory } as system) =
         in
             {- We still need to handle interrupts here. -}
             instruction |> processInstruction newSystem
-
-
-updateCycles : Instruction -> Cpu -> Int
-updateCycles instruction { cycles } =
-    cycles
-        + instruction.cycles
-        + (count instruction.pageCrossed)
 
 
 
