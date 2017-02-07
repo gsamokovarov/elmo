@@ -57,7 +57,10 @@ tick ({ cpu, memory } as system) =
                     | cpu =
                         { cpu
                             | pc = cpu.pc + instruction.bytes
-                            , cycles = cpu |> updateCycles instruction
+                            , cycles =
+                                cycles
+                                    + instruction.cycles
+                                    + (count instruction.pageCrossed)
                         }
                 }
         in
@@ -69,11 +72,7 @@ updateCycles : Instruction -> Cpu -> Int
 updateCycles instruction { cycles } =
     cycles
         + instruction.cycles
-        + (if instruction.pageCrossed then
-            instruction.pageCycles
-           else
-            0
-          )
+        + (count instruction.pageCrossed)
 
 
 
@@ -420,11 +419,7 @@ bcc ({ cpu } as system) { address, branchPageCycles } =
                     , cycles =
                         cpu.cycles
                             + branchPageCycles
-                            + (if pageCrossed cpu.pc address then
-                                1
-                               else
-                                0
-                              )
+                            + count (pageCrossed cpu.pc address)
                 }
         }
     else
@@ -572,3 +567,11 @@ stackPull ({ cpu, memory } as system) =
 pageCrossed : Int -> Int -> Bool
 pageCrossed a b =
     (0xFF00 &&& a) /= (0xFF00 &&& b)
+
+
+count : Bool -> Int
+count bool =
+    if bool then
+        1
+    else
+        0
