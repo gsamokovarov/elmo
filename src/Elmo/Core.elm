@@ -94,10 +94,6 @@ type alias Instruction =
 dispatchInstruction : System -> Instruction
 dispatchInstruction { cpu, memory } =
     let
-        pageCrossed : Int -> Int -> Bool
-        pageCrossed a b =
-            (0xFF00 &&& a) /= (0xFF00 &&& b)
-
         opcode =
             memory
                 |> Memory.read cpu.pc
@@ -421,7 +417,14 @@ bcc ({ cpu } as system) { address, branchPageCycles } =
             | cpu =
                 { cpu
                     | pc = address
-                    , cycles = cpu.cycles + branchPageCycles
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + (if pageCrossed cpu.pc address then
+                                1
+                               else
+                                0
+                              )
                 }
         }
     else
@@ -560,3 +563,12 @@ stackPull ({ cpu, memory } as system) =
       }
     , Memory.read (cpu.sp + 1) memory
     )
+
+
+
+-- UTILS
+
+
+pageCrossed : Int -> Int -> Bool
+pageCrossed a b =
+    (0xFF00 &&& a) /= (0xFF00 &&& b)
