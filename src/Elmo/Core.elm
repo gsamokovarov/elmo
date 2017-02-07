@@ -339,7 +339,7 @@ adc ({ cpu, memory } as system) { address } =
 
         flags =
             cpu.p
-                |> Flags.setSign (sum < 0)
+                |> Flags.setSign ((accumulator &&& 0x80) /= 0)
                 |> Flags.setZero (sum == 0)
                 |> Flags.setCarry (sum > 0xFF)
                 |> Flags.setOverflow overflow
