@@ -409,6 +409,10 @@ asl ({ cpu, memory } as system) { mode, address } =
                 }
 
 
+{-| No-operation instruction.
+
+It simply does nothing. Useful to comment code in assembly.
+-}
 nop : System -> Instruction -> System
 nop system instruction =
     system
