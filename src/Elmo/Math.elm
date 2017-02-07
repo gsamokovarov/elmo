@@ -3,12 +3,14 @@ module Elmo.Math exposing (..)
 import Bitwise
 
 
+-- OPERATORS
+
+
 {-| Bitwise logical and operation.
 -}
 (&&&) : Int -> Int -> Int
 (&&&) =
     Bitwise.and
-infixl 4 &&&
 
 
 {-| Bitwise logical or operation.
@@ -16,7 +18,6 @@ infixl 4 &&&
 (|||) : Int -> Int -> Int
 (|||) =
     Bitwise.or
-infixl 4 |||
 
 
 {-| Bitwise logical or operation.
@@ -24,7 +25,6 @@ infixl 4 |||
 (^^^) : Int -> Int -> Int
 (^^^) =
     Bitwise.xor
-infixl 4 ^^^
 
 
 {-| Shift the number a with b bits to the left.
@@ -32,7 +32,6 @@ infixl 4 ^^^
 (<<<) : Int -> Int -> Int
 (<<<) a b =
     Bitwise.shiftLeftBy b a
-infixl 5 <<<
 
 
 {-| Shift the number a with b bits to the left.
@@ -40,4 +39,22 @@ infixl 5 <<<
 (>>>) : Int -> Int -> Int
 (>>>) a b =
     Bitwise.shiftRightBy b a
+
+
+
+-- PRIORITIES
+
+
+infixl 4 &&&
+
+
+infixl 4 |||
+
+
+infixl 4 ^^^
+
+
+infixl 5 <<<
+
+
 infixl 5 >>>
