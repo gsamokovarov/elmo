@@ -90,6 +90,9 @@ process system instruction =
         CLV ->
             instruction |> clv system
 
+        CMP ->
+            instruction |> cmp system
+
         NOP ->
             instruction |> nop system
 
@@ -445,14 +448,30 @@ cli ({ cpu } as system) { address } =
 -}
 clv : System -> Instruction -> System
 clv ({ cpu } as system) { address } =
-    { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
+    { system | cpu = { cpu | p = cpu.p |> Flags.setOverflow False } }
 
 
-{-| Clear overflow flag.
+{-| Compare memory and accumulator.
 -}
-clv : System -> Instruction -> System
-clv ({ cpu } as system) { address } =
-    { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
+cmp : System -> Instruction -> System
+cmp ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        div =
+            cpu.a - value
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
+                        cpu.p
+                            |> Flags.setCarry (value < 0x0100)
+                            |> Flags.setSign value
+                            |> Flags.setZero (value &&& 0xFF)
+                }
+        }
 
 
 {-| No-operation instruction.
