@@ -87,6 +87,9 @@ process system instruction =
         CLI ->
             instruction |> cli system
 
+        CLV ->
+            instruction |> clv system
+
         NOP ->
             instruction |> nop system
 
@@ -431,10 +434,17 @@ cld ({ cpu } as system) { address, branchPageCycles } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setDecimal False } }
 
 
-{-| Clear carry flag.
+{-| Clear interrupt flag.
 -}
 cli : System -> Instruction -> System
 cli ({ cpu } as system) { address, branchPageCycles } =
+    { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
+
+
+{-| Clear overflow flag.
+-}
+clv : System -> Instruction -> System
+clv ({ cpu } as system) { address, branchPageCycles } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
 
 
