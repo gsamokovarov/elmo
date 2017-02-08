@@ -145,6 +145,9 @@ process system instruction =
         PHP ->
             instruction |> php system
 
+        PLA ->
+            instruction |> pla system
+
         NOP ->
             instruction |> nop system
 
@@ -857,6 +860,26 @@ pha ({ cpu } as system) instruction =
 php : System -> Instruction -> System
 php ({ cpu } as system) instruction =
     system |> Stack.push cpu.p
+
+
+{-| Pull accumulator from the stack.
+-}
+pla : System -> Instruction -> System
+pla ({ cpu } as system) instruction =
+    let
+        ( systemAfterPull, value ) =
+            system |> Stack.pull
+    in
+        { systemAfterPull
+            | cpu =
+                { cpu
+                    | a = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
 
 
 {-| No-operation instruction.
