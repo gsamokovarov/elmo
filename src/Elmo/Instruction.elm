@@ -3,8 +3,7 @@ module Elmo.Instruction exposing (..)
 import Elmo.Types exposing (System, Cpu)
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
-import Elmo.Math exposing ((&&&))
-import Elmo.Utils exposing (pageCrossed)
+import Elmo.Utils exposing ((&&&), pageCrossed)
 
 
 type alias Instruction =

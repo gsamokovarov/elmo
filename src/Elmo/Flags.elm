@@ -12,7 +12,7 @@ module Elmo.Flags exposing (..)
     See docs/6502.txt for more details on the role of each of the flags above.
 -}
 
-import Elmo.Math exposing ((|||), (&&&), (^^^))
+import Elmo.Utils exposing ((|||), (&&&), (^^^))
 
 
 init : Int

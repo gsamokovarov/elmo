@@ -9,8 +9,7 @@ import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Instruction as Instruction exposing (Instruction)
 import Elmo.Types exposing (System, Interrupt, Cpu)
-import Elmo.Math exposing ((&&&), (|||), (^^^), (<<<))
-import Elmo.Utils exposing (pageCrossed, count)
+import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), pageCrossed, count)
 import Elmo.Flags as Flags
 import Bitwise
 

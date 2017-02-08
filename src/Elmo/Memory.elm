@@ -1,6 +1,6 @@
 module Elmo.Memory exposing (..)
 
-import Elmo.Math exposing ((|||), (&&&))
+import Elmo.Utils exposing ((|||), (&&&))
 import Array exposing (Array)
 import Bitwise
 
