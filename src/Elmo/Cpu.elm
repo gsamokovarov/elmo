@@ -705,91 +705,73 @@ nop system instruction =
 -- UNUSED
 
 
-ahx : System -> Instruction -> System
 ahx =
     nop
 
 
-alr : System -> Instruction -> System
 alr =
     nop
 
 
-arr : System -> Instruction -> System
 arr =
     nop
 
 
-axs : System -> Instruction -> System
 axs =
     nop
 
 
-dcp : System -> Instruction -> System
 dcp =
     nop
 
 
-ill : System -> Instruction -> System
 ill =
     nop
 
 
-isc : System -> Instruction -> System
 isc =
     nop
 
 
-las : System -> Instruction -> System
 las =
     nop
 
 
-lax : System -> Instruction -> System
 lax =
     nop
 
 
-rla : System -> Instruction -> System
 rla =
     nop
 
 
-rra : System -> Instruction -> System
 rra =
     nop
 
 
-sax : System -> Instruction -> System
 sax =
     nop
 
 
-shx : System -> Instruction -> System
 shx =
     nop
 
 
-shy : System -> Instruction -> System
 shy =
     nop
 
 
-slo : System -> Instruction -> System
 slo =
     nop
 
 
-sre : System -> Instruction -> System
 sre =
     nop
 
 
-tas : System -> Instruction -> System
 tas =
     nop
 
 
-xaa : System -> Instruction -> System
 xaa =
     nop
