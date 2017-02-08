@@ -145,7 +145,7 @@ dispatch opcode =
             Opcode ASL Absolute opcode 6 0 0 3
 
         0x10 ->
-            Opcode BPL Immediate opcode 2 0 2 2
+            Opcode BPL Immediate opcode 2 0 1 2
 
         0x11 ->
             Opcode ORA IndirectY opcode 5 1 0 2
@@ -202,7 +202,7 @@ dispatch opcode =
             Opcode ROL Absolute opcode 6 0 0 3
 
         0x30 ->
-            Opcode BMI Immediate opcode 2 0 2 2
+            Opcode BMI Immediate opcode 2 0 1 2
 
         0x31 ->
             Opcode AND IndirectY opcode 5 1 0 2
@@ -256,7 +256,7 @@ dispatch opcode =
             Opcode LSR Absolute opcode 6 0 0 3
 
         0x50 ->
-            Opcode BVC Relative opcode 2 0 2 2
+            Opcode BVC Relative opcode 2 0 1 2
 
         0x51 ->
             Opcode EOR IndirectY opcode 5 1 0 2
@@ -310,7 +310,7 @@ dispatch opcode =
             Opcode ROR Absolute opcode 6 0 0 3
 
         0x70 ->
-            Opcode BVS Relative opcode 2 0 2 2
+            Opcode BVS Relative opcode 2 0 1 2
 
         0x71 ->
             Opcode ADC IndirectY opcode 5 1 0 2
@@ -361,7 +361,7 @@ dispatch opcode =
             Opcode STX Absolute opcode 4 0 0 3
 
         0x90 ->
-            Opcode BCC Relative opcode 2 0 2 2
+            Opcode BCC Relative opcode 2 0 1 2
 
         0x91 ->
             Opcode STA IndirectY opcode 6 0 0 2
@@ -424,7 +424,7 @@ dispatch opcode =
             Opcode LDX Absolute opcode 4 0 0 3
 
         0xB0 ->
-            Opcode BCS Relative opcode 2 0 2 2
+            Opcode BCS Relative opcode 2 0 1 2
 
         0xB1 ->
             Opcode LDA IndirectY opcode 5 1 0 2
@@ -490,7 +490,7 @@ dispatch opcode =
             Opcode DEC Absolute opcode 6 0 0 3
 
         0xD0 ->
-            Opcode BNE Relative opcode 2 0 2 2
+            Opcode BNE Relative opcode 2 0 1 2
 
         0xD1 ->
             Opcode CMP IndirectY opcode 5 1 0 2
@@ -547,7 +547,7 @@ dispatch opcode =
             Opcode INC Absolute opcode 6 0 0 3
 
         0xF0 ->
-            Opcode BEQ Relative opcode 2 0 2 2
+            Opcode BEQ Relative opcode 2 0 1 2
 
         0xF1 ->
             Opcode SBC IndirectY opcode 5 1 0 2
