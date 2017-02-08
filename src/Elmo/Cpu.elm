@@ -9,7 +9,7 @@ import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Instruction as Instruction exposing (Instruction)
 import Elmo.Types exposing (System, Interrupt, Cpu)
-import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), pageCrossed, count)
+import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), (>>>), pageCrossed, count)
 import Elmo.Stack as Stack
 import Elmo.Flags as Flags
 import Bitwise
@@ -24,7 +24,7 @@ tick ({ cpu, memory } as system) =
             instruction =
                 Instruction.dispatch system
 
-            newSystem =
+            systemAfterPcAndCyclesUpdate =
                 { system
                     | cpu =
                         { cpu
@@ -37,7 +37,7 @@ tick ({ cpu, memory } as system) =
                 }
         in
             {- We still need to handle interrupts here. -}
-            instruction |> process newSystem
+            instruction |> process systemAfterPcAndCyclesUpdate
 
 
 process : System -> Instruction -> System
@@ -132,6 +132,9 @@ process system instruction =
 
         LDY ->
             instruction |> ldy system
+
+        LSR ->
+            instruction |> lsr system
 
         NOP ->
             instruction |> nop system
@@ -756,7 +759,7 @@ ldx ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Load memory to register X.
+{-| Load memory to register Y.
 -}
 ldy : System -> Instruction -> System
 ldy ({ cpu, memory } as system) { address } =
@@ -783,6 +786,43 @@ It simply does nothing. Useful to comment code in assembly.
 nop : System -> Instruction -> System
 nop system instruction =
     system
+
+
+{-| Shift Left One Bit (Memory or Accumulator).
+-}
+lsr : System -> Instruction -> System
+lsr ({ cpu, memory } as system) { mode, address } =
+    case mode of
+        Accumulator ->
+            { system
+                | cpu =
+                    { cpu
+                        | a = cpu.a >>> 1
+                        , p =
+                            cpu.p
+                                |> Flags.setCarry ((cpu.a &&& 0x01) == 0x01)
+                                |> Flags.setSign cpu.a
+                                |> Flags.setZero cpu.a
+                    }
+            }
+
+        _ ->
+            let
+                value =
+                    memory |> Memory.read address
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | p =
+                                cpu.p
+                                    |> Flags.setCarry ((value &&& 0x01) == 0x01)
+                                    |> Flags.setSign value
+                                    |> Flags.setZero value
+                        }
+                    , memory =
+                        memory |> Memory.write address (value >>> 1)
+                }
 
 
 
