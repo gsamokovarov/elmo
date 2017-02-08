@@ -96,6 +96,9 @@ process system instruction =
         CPX ->
             instruction |> cpx system
 
+        CPY ->
+            instruction |> cpy system
+
         NOP ->
             instruction |> nop system
 
@@ -487,6 +490,29 @@ cpx ({ cpu, memory } as system) { address } =
 
         div =
             cpu.x - value
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
+                        cpu.p
+                            |> Flags.setCarry (value < 0x0100)
+                            |> Flags.setSign value
+                            |> Flags.setZero (value &&& 0xFF)
+                }
+        }
+
+
+{-| Compare memory and register y.
+-}
+cpy : System -> Instruction -> System
+cpy ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        div =
+            cpu.y - value
     in
         { system
             | cpu =
