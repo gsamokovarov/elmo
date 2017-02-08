@@ -108,6 +108,9 @@ process system instruction =
         DEY ->
             instruction |> dey system
 
+        EOR ->
+            instruction |> eor system
+
         NOP ->
             instruction |> nop system
 
@@ -586,6 +589,26 @@ dey ({ cpu } as system) { address } =
             | cpu =
                 { cpu
                     | y = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Exclusive or memory with accumulator.
+-}
+eor : System -> Instruction -> System
+eor ({ cpu, memory } as system) { address } =
+    let
+        value =
+            (memory |> Memory.read address) ^^^ cpu.a
+    in
+        { system
+            | cpu =
+                { cpu
+                    | a = value
                     , p =
                         cpu.p
                             |> Flags.setSign value
