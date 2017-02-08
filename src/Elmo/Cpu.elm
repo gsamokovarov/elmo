@@ -114,6 +114,9 @@ process system instruction =
         INC ->
             instruction |> inc system
 
+        INX ->
+            instruction |> inx system
+
         NOP ->
             instruction |> nop system
 
@@ -632,6 +635,26 @@ inc ({ cpu, memory } as system) { address } =
             | cpu =
                 { cpu
                     | p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Increment register X by one.
+-}
+inx : System -> Instruction -> System
+inx ({ cpu } as system) { address } =
+    let
+        value =
+            (cpu.x + 1) &&& 0xFF
+    in
+        { system
+            | cpu =
+                { cpu
+                    | x = value
+                    , p =
                         cpu.p
                             |> Flags.setSign value
                             |> Flags.setZero value
