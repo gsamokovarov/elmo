@@ -81,6 +81,9 @@ process system instruction =
         CLC ->
             instruction |> clc system
 
+        CLD ->
+            instruction |> cld system
+
         NOP ->
             instruction |> nop system
 
@@ -416,6 +419,13 @@ bvs ({ cpu } as system) { address, branchPageCycles } =
 clc : System -> Instruction -> System
 clc ({ cpu } as system) { address, branchPageCycles } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setCarry False } }
+
+
+{-| Clear carry flag.
+-}
+cld : System -> Instruction -> System
+cld ({ cpu } as system) { address, branchPageCycles } =
+    { system | cpu = { cpu | p = cpu.p |> Flags.setDecimal False } }
 
 
 {-| No-operation instruction.
