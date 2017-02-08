@@ -99,6 +99,9 @@ process system instruction =
         CPY ->
             instruction |> cpy system
 
+        DEC ->
+            instruction |> dec system
+
         NOP ->
             instruction |> nop system
 
@@ -523,6 +526,26 @@ cpy ({ cpu, memory } as system) { address } =
                             |> Flags.setSign value
                             |> Flags.setZero (value &&& 0xFF)
                 }
+        }
+
+
+{-| Decrement Memory by One
+-}
+dec : System -> Instruction -> System
+dec ({ cpu, memory } as system) { address } =
+    let
+        value =
+            (memory |> Memory.read address) - 1
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+            , memory = memory |> Memory.write address value
         }
 
 
