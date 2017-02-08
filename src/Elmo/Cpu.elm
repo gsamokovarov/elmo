@@ -78,6 +78,9 @@ process system instruction =
         BVS ->
             instruction |> bvs system
 
+        CLC ->
+            instruction |> clc system
+
         NOP ->
             instruction |> nop system
 
@@ -406,6 +409,13 @@ bvs ({ cpu } as system) { address, branchPageCycles } =
         }
     else
         system
+
+
+{-| Clear carry flag.
+-}
+clc : System -> Instruction -> System
+clc ({ cpu } as system) { address, branchPageCycles } =
+    { system | cpu = { cpu | p = cpu.p |> Flags.setCarry False } }
 
 
 {-| No-operation instruction.
