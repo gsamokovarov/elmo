@@ -105,6 +105,9 @@ process system instruction =
         DEX ->
             instruction |> dex system
 
+        DEY ->
+            instruction |> dey system
+
         NOP ->
             instruction |> nop system
 
@@ -486,7 +489,7 @@ cmp ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Compare memory and register x.
+{-| Compare memory and register X.
 -}
 cpx : System -> Instruction -> System
 cpx ({ cpu, memory } as system) { address } =
@@ -509,7 +512,7 @@ cpx ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Compare memory and register y.
+{-| Compare memory and register Y.
 -}
 cpy : System -> Instruction -> System
 cpy ({ cpu, memory } as system) { address } =
@@ -551,18 +554,38 @@ dec ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Decrement accumulator value by 1.
+{-| Decrement register X value by 1.
 -}
 dex : System -> Instruction -> System
 dex ({ cpu } as system) { address } =
     let
         value =
-            cpu.x - 1
+            (cpu.x - 1) &&& 0xFF
     in
         { system
             | cpu =
                 { cpu
                     | x = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Decrement register Y value by 1.
+-}
+dey : System -> Instruction -> System
+dey ({ cpu } as system) { address } =
+    let
+        value =
+            (cpu.y - 1) &&& 0xFF
+    in
+        { system
+            | cpu =
+                { cpu
+                    | y = value
                     , p =
                         cpu.p
                             |> Flags.setSign value
