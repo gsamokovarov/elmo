@@ -117,6 +117,9 @@ process system instruction =
         INX ->
             instruction |> inx system
 
+        JMP ->
+            instruction |> jmp system
+
         NOP ->
             instruction |> nop system
 
@@ -680,6 +683,13 @@ iny ({ cpu } as system) { address } =
                             |> Flags.setZero value
                 }
         }
+
+
+{-| Jump to new location.
+-}
+jmp : System -> Instruction -> System
+jmp ({ cpu, memory } as system) { address } =
+    { system | cpu = { cpu | pc = memory |> Memory.read address } }
 
 
 {-| No-operation instruction.
