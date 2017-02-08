@@ -127,6 +127,9 @@ process system instruction =
         LDA ->
             instruction |> lda system
 
+        LDX ->
+            instruction |> ldx system
+
         NOP ->
             instruction |> nop system
 
@@ -710,7 +713,7 @@ jsr ({ cpu, memory } as system) { address } =
         { systemAfterPush | cpu = { cpu | pc = address } }
 
 
-{-| Load accumulator with memory.
+{-| Load memory to the accumulator..
 -}
 lda : System -> Instruction -> System
 lda ({ cpu, memory } as system) { address } =
@@ -722,6 +725,26 @@ lda ({ cpu, memory } as system) { address } =
             | cpu =
                 { cpu
                     | a = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Load memory to register X.
+-}
+ldx : System -> Instruction -> System
+ldx ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+    in
+        { system
+            | cpu =
+                { cpu
+                    | x = value
                     , p =
                         cpu.p
                             |> Flags.setSign value
