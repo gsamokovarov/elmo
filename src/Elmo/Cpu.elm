@@ -10,6 +10,7 @@ import Elmo.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Instruction as Instruction exposing (Instruction)
 import Elmo.Types exposing (System, Interrupt, Cpu)
 import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), pageCrossed, count)
+import Elmo.Stack as Stack
 import Elmo.Flags as Flags
 import Bitwise
 
@@ -119,6 +120,9 @@ process system instruction =
 
         JMP ->
             instruction |> jmp system
+
+        JSR ->
+            instruction |> jsr system
 
         NOP ->
             instruction |> nop system
@@ -690,6 +694,17 @@ iny ({ cpu } as system) { address } =
 jmp : System -> Instruction -> System
 jmp ({ cpu, memory } as system) { address } =
     { system | cpu = { cpu | pc = memory |> Memory.read address } }
+
+
+{-| Jump to new location saving return address.
+-}
+jsr : System -> Instruction -> System
+jsr ({ cpu, memory } as system) { address } =
+    let
+        systemAfterPush =
+            system |> Stack.push16 (cpu.pc - 1)
+    in
+        { systemAfterPush | cpu = { cpu | pc = address } }
 
 
 {-| No-operation instruction.
