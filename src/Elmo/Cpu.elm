@@ -69,9 +69,13 @@ process system instruction =
         BNE ->
             instruction |> bne system
 
+        BPL ->
+            instruction |> bpl system
+
         NOP ->
             instruction |> nop system
 
+        {- Instructions that are unused on 2A03, but still present on 6502. -}
         AHX ->
             instruction |> ahx system
 
@@ -326,6 +330,25 @@ bmi ({ cpu } as system) { address, branchPageCycles } =
 -}
 bne : System -> Instruction -> System
 bne ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& Flags.zero) == 0 then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + count (pageCrossed cpu.pc address)
+                }
+        }
+    else
+        system
+
+
+{-| Branch on positive result.
+-}
+bpl : System -> Instruction -> System
+bpl ({ cpu } as system) { address, branchPageCycles } =
     if (cpu.p &&& Flags.sign) == 0 then
         { system
             | cpu =
@@ -351,9 +374,7 @@ nop system instruction =
 
 
 
-{- The following instructions are unused on the 2A03, but are still present on
-   the 6502.
--}
+-- UNUSED
 
 
 ahx : System -> Instruction -> System
