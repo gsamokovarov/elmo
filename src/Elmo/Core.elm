@@ -9,38 +9,11 @@ import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
 import Elmo.Flags as Flags
 import Elmo.Math exposing ((&&&), (|||), (^^^), (<<<))
+import Elmo.Types exposing (System, Interrupt, Cpu)
 import Bitwise
 
 
--- SYSTEM
-
-
-type alias System =
-    { cpu : Cpu
-    , memory : Memory
-    }
-
-
-
 -- CPU
-
-
-type Interrupt
-    = NMI
-    | IRQ
-
-
-type alias Cpu =
-    { pc : Int
-    , sp : Int
-    , a : Int
-    , x : Int
-    , y : Int
-    , p : Int
-    , interrupt : Maybe Interrupt
-    , stall : Int
-    , cycles : Int
-    }
 
 
 tick : System -> System
