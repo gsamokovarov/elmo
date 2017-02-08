@@ -102,6 +102,9 @@ process system instruction =
         DEC ->
             instruction |> dec system
 
+        DEX ->
+            instruction |> dex system
+
         NOP ->
             instruction |> nop system
 
@@ -529,7 +532,7 @@ cpy ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Decrement Memory by One
+{-| Decrement memory value by one.
 -}
 dec : System -> Instruction -> System
 dec ({ cpu, memory } as system) { address } =
@@ -545,7 +548,26 @@ dec ({ cpu, memory } as system) { address } =
                             |> Flags.setSign value
                             |> Flags.setZero value
                 }
-            , memory = memory |> Memory.write address value
+        }
+
+
+{-| Decrement accumulator value by 1.
+-}
+dex : System -> Instruction -> System
+dex ({ cpu } as system) { address } =
+    let
+        value =
+            cpu.x - 1
+    in
+        { system
+            | cpu =
+                { cpu
+                    | x = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
         }
 
 
