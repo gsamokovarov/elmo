@@ -662,6 +662,26 @@ inx ({ cpu } as system) { address } =
         }
 
 
+{-| Increment register X by one.
+-}
+iny : System -> Instruction -> System
+iny ({ cpu } as system) { address } =
+    let
+        value =
+            (cpu.y + 1) &&& 0xFF
+    in
+        { system
+            | cpu =
+                { cpu
+                    | y = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
 {-| No-operation instruction.
 
 It simply does nothing. Useful to comment code in assembly.
