@@ -130,6 +130,9 @@ process system instruction =
         LDX ->
             instruction |> ldx system
 
+        LDY ->
+            instruction |> ldy system
+
         NOP ->
             instruction |> nop system
 
@@ -745,6 +748,26 @@ ldx ({ cpu, memory } as system) { address } =
             | cpu =
                 { cpu
                     | x = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Load memory to register X.
+-}
+ldy : System -> Instruction -> System
+ldy ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+    in
+        { system
+            | cpu =
+                { cpu
+                    | y = value
                     , p =
                         cpu.p
                             |> Flags.setSign value
