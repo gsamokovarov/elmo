@@ -472,7 +472,7 @@ cmp ({ cpu, memory } as system) { address } =
             memory |> Memory.read address
 
         div =
-            cpu.a - value
+            (cpu.a - value) &&& 0xFF
     in
         { system
             | cpu =
@@ -481,7 +481,7 @@ cmp ({ cpu, memory } as system) { address } =
                         cpu.p
                             |> Flags.setCarry (value < 0x0100)
                             |> Flags.setSign value
-                            |> Flags.setZero (value &&& 0xFF)
+                            |> Flags.setZero value
                 }
         }
 
@@ -495,16 +495,16 @@ cpx ({ cpu, memory } as system) { address } =
             memory |> Memory.read address
 
         div =
-            cpu.x - value
+            (cpu.x - value) &&& 0xFF
     in
         { system
             | cpu =
                 { cpu
                     | p =
                         cpu.p
-                            |> Flags.setCarry (value < 0x0100)
+                            |> Flags.setCarry (cpu.x >= value)
                             |> Flags.setSign value
-                            |> Flags.setZero (value &&& 0xFF)
+                            |> Flags.setZero value
                 }
         }
 
@@ -518,16 +518,16 @@ cpy ({ cpu, memory } as system) { address } =
             memory |> Memory.read address
 
         div =
-            cpu.y - value
+            (cpu.y - value) &&& 0xFF
     in
         { system
             | cpu =
                 { cpu
                     | p =
                         cpu.p
-                            |> Flags.setCarry (value < 0x0100)
+                            |> Flags.setCarry (cpu.y >= value)
                             |> Flags.setSign value
-                            |> Flags.setZero (value &&& 0xFF)
+                            |> Flags.setZero value
                 }
         }
 
