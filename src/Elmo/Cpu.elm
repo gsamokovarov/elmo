@@ -111,6 +111,9 @@ process system instruction =
         EOR ->
             instruction |> eor system
 
+        INC ->
+            instruction |> inc system
+
         NOP ->
             instruction |> nop system
 
@@ -544,7 +547,7 @@ dec : System -> Instruction -> System
 dec ({ cpu, memory } as system) { address } =
     let
         value =
-            (memory |> Memory.read address) - 1
+            ((memory |> Memory.read address) - 1) &&& 0xFF
     in
         { system
             | cpu =
@@ -610,6 +613,25 @@ eor ({ cpu, memory } as system) { address } =
                 { cpu
                     | a = value
                     , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| Increment memory value by one.
+-}
+inc : System -> Instruction -> System
+inc ({ cpu, memory } as system) { address } =
+    let
+        value =
+            ((memory |> Memory.read address) + 1) &&& 0xFF
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
                         cpu.p
                             |> Flags.setSign value
                             |> Flags.setZero value
