@@ -423,28 +423,35 @@ bvs ({ cpu } as system) { address, branchPageCycles } =
 {-| Clear carry flag.
 -}
 clc : System -> Instruction -> System
-clc ({ cpu } as system) { address, branchPageCycles } =
+clc ({ cpu } as system) { address } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setCarry False } }
 
 
 {-| Clear decimal flag.
 -}
 cld : System -> Instruction -> System
-cld ({ cpu } as system) { address, branchPageCycles } =
+cld ({ cpu } as system) { address } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setDecimal False } }
 
 
 {-| Clear interrupt flag.
 -}
 cli : System -> Instruction -> System
-cli ({ cpu } as system) { address, branchPageCycles } =
+cli ({ cpu } as system) { address } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
 
 
 {-| Clear overflow flag.
 -}
 clv : System -> Instruction -> System
-clv ({ cpu } as system) { address, branchPageCycles } =
+clv ({ cpu } as system) { address } =
+    { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
+
+
+{-| Clear overflow flag.
+-}
+clv : System -> Instruction -> System
+clv ({ cpu } as system) { address } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setInterrupt False } }
 
 
