@@ -139,6 +139,9 @@ process system instruction =
         ORA ->
             instruction |> ora system
 
+        PHA ->
+            instruction |> pha system
+
         NOP ->
             instruction |> nop system
 
@@ -837,6 +840,13 @@ ora ({ cpu, memory } as system) { address } =
                             |> Flags.setZero value
                 }
         }
+
+
+{-| Push the accumulator to the stack.
+-}
+pha : System -> Instruction -> System
+pha ({ cpu } as system) instruction =
+    system |> Stack.push cpu.a
 
 
 {-| No-operation instruction.
