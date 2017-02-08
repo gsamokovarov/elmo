@@ -93,6 +93,9 @@ process system instruction =
         CMP ->
             instruction |> cmp system
 
+        CPX ->
+            instruction |> cpx system
+
         NOP ->
             instruction |> nop system
 
@@ -156,7 +159,7 @@ process system instruction =
 
 
 
--- INSTRUCTION
+-- INSTRUCTIONS
 
 
 {-| Add accumulator with carry.
@@ -461,6 +464,29 @@ cmp ({ cpu, memory } as system) { address } =
 
         div =
             cpu.a - value
+    in
+        { system
+            | cpu =
+                { cpu
+                    | p =
+                        cpu.p
+                            |> Flags.setCarry (value < 0x0100)
+                            |> Flags.setSign value
+                            |> Flags.setZero (value &&& 0xFF)
+                }
+        }
+
+
+{-| Compare memory and register x.
+-}
+cpx : System -> Instruction -> System
+cpx ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        div =
+            cpu.x - value
     in
         { system
             | cpu =
