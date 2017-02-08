@@ -1,4 +1,4 @@
-module Elmo.Core exposing (..)
+module Elmo.Cpu exposing (..)
 
 {-| The NES Central Processing Unit was a variant of the 8-bit 6502 processor
 called 2A03. It can handle sound, having a pAPU (psuedo-Audio Processing
