@@ -469,90 +469,90 @@ nop system instruction =
 
 
 ahx : System -> Instruction -> System
-ahx system instruction =
-    system
+ahx =
+    nop
 
 
 alr : System -> Instruction -> System
-alr system instruction =
-    system
+alr =
+    nop
 
 
 arr : System -> Instruction -> System
-arr system instruction =
-    system
+arr =
+    nop
 
 
 axs : System -> Instruction -> System
-axs system instruction =
-    system
+axs =
+    nop
 
 
 dcp : System -> Instruction -> System
-dcp system instruction =
-    system
+dcp =
+    nop
 
 
 ill : System -> Instruction -> System
-ill system instruction =
-    system
+ill =
+    nop
 
 
 isc : System -> Instruction -> System
-isc system instruction =
-    system
+isc =
+    nop
 
 
 las : System -> Instruction -> System
-las system instruction =
-    system
+las =
+    nop
 
 
 lax : System -> Instruction -> System
-lax system instruction =
-    system
+lax =
+    nop
 
 
 rla : System -> Instruction -> System
-rla system instruction =
-    system
+rla =
+    nop
 
 
 rra : System -> Instruction -> System
-rra system instruction =
-    system
+rra =
+    nop
 
 
 sax : System -> Instruction -> System
-sax system instruction =
-    system
+sax =
+    nop
 
 
 shx : System -> Instruction -> System
-shx system instruction =
-    system
+shx =
+    nop
 
 
 shy : System -> Instruction -> System
-shy system instruction =
-    system
+shy =
+    nop
 
 
 slo : System -> Instruction -> System
-slo system instruction =
-    system
+slo =
+    nop
 
 
 sre : System -> Instruction -> System
-sre system instruction =
-    system
+sre =
+    nop
 
 
 tas : System -> Instruction -> System
-tas system instruction =
-    system
+tas =
+    nop
 
 
 xaa : System -> Instruction -> System
-xaa system instruction =
-    system
+xaa =
+    nop
