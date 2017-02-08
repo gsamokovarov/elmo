@@ -75,6 +75,9 @@ process system instruction =
         BVC ->
             instruction |> bvc system
 
+        BVS ->
+            instruction |> bvs system
+
         NOP ->
             instruction |> nop system
 
@@ -372,6 +375,25 @@ bpl ({ cpu } as system) { address, branchPageCycles } =
 bvc : System -> Instruction -> System
 bvc ({ cpu } as system) { address, branchPageCycles } =
     if (cpu.p &&& Flags.overflow) == 0 then
+        { system
+            | cpu =
+                { cpu
+                    | pc = address
+                    , cycles =
+                        cpu.cycles
+                            + branchPageCycles
+                            + count (pageCrossed cpu.pc address)
+                }
+        }
+    else
+        system
+
+
+{-| Branch on overflow set.
+-}
+bvs : System -> Instruction -> System
+bvs ({ cpu } as system) { address, branchPageCycles } =
+    if (cpu.p &&& Flags.overflow) == Flags.overflow then
         { system
             | cpu =
                 { cpu
