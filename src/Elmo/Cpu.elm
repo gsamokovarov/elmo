@@ -124,6 +124,9 @@ process system instruction =
         JSR ->
             instruction |> jsr system
 
+        LDA ->
+            instruction |> lda system
+
         NOP ->
             instruction |> nop system
 
@@ -705,6 +708,26 @@ jsr ({ cpu, memory } as system) { address } =
             system |> Stack.push16 (cpu.pc - 1)
     in
         { systemAfterPush | cpu = { cpu | pc = address } }
+
+
+{-| Load accumulator with memory.
+-}
+lda : System -> Instruction -> System
+lda ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+    in
+        { system
+            | cpu =
+                { cpu
+                    | a = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
 
 
 {-| No-operation instruction.
