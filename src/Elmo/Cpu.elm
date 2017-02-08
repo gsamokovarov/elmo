@@ -136,6 +136,9 @@ process system instruction =
         LSR ->
             instruction |> lsr system
 
+        ORA ->
+            instruction |> ora system
+
         NOP ->
             instruction |> nop system
 
@@ -779,15 +782,6 @@ ldy ({ cpu, memory } as system) { address } =
         }
 
 
-{-| No-operation instruction.
-
-It simply does nothing. Useful to comment code in assembly.
--}
-nop : System -> Instruction -> System
-nop system instruction =
-    system
-
-
 {-| Shift Left One Bit (Memory or Accumulator).
 -}
 lsr : System -> Instruction -> System
@@ -823,6 +817,35 @@ lsr ({ cpu, memory } as system) { mode, address } =
                     , memory =
                         memory |> Memory.write address (value >>> 1)
                 }
+
+
+{-| Logical inclusive or between memory and accumulator.
+-}
+ora : System -> Instruction -> System
+ora ({ cpu, memory } as system) { address } =
+    let
+        value =
+            cpu.a ||| (memory |> Memory.read address)
+    in
+        { system
+            | cpu =
+                { cpu
+                    | a = value
+                    , p =
+                        cpu.p
+                            |> Flags.setSign value
+                            |> Flags.setZero value
+                }
+        }
+
+
+{-| No-operation instruction.
+
+It simply does nothing. Useful to comment code in assembly.
+-}
+nop : System -> Instruction -> System
+nop system instruction =
+    system
 
 
 
