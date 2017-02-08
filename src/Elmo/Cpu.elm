@@ -142,6 +142,9 @@ process system instruction =
         PHA ->
             instruction |> pha system
 
+        PHP ->
+            instruction |> php system
+
         NOP ->
             instruction |> nop system
 
@@ -847,6 +850,13 @@ ora ({ cpu, memory } as system) { address } =
 pha : System -> Instruction -> System
 pha ({ cpu } as system) instruction =
     system |> Stack.push cpu.a
+
+
+{-| Push the status register to the stack.
+-}
+php : System -> Instruction -> System
+php ({ cpu } as system) instruction =
+    system |> Stack.push cpu.p
 
 
 {-| No-operation instruction.
