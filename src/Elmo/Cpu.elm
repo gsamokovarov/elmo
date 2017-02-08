@@ -148,6 +148,9 @@ process system instruction =
         PLA ->
             instruction |> pla system
 
+        PLP ->
+            instruction |> plp system
+
         NOP ->
             instruction |> nop system
 
@@ -880,6 +883,17 @@ pla ({ cpu } as system) instruction =
                             |> Flags.setZero value
                 }
         }
+
+
+{-| Pull status from the stack.
+-}
+plp : System -> Instruction -> System
+plp ({ cpu } as system) instruction =
+    let
+        ( systemAfterPull, value ) =
+            system |> Stack.pull
+    in
+        { systemAfterPull | cpu = { cpu | p = value } }
 
 
 {-| No-operation instruction.

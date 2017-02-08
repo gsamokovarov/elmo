@@ -18,9 +18,9 @@ import Elmo.Utils exposing ((|||), (&&&), (^^^))
 init : Int
 init =
     {- In the initial state, the fifth byte, which is unused, is always up.
-       0b0000_1000
+       0b0010_0000
     -}
-    16
+    32
 
 
 
@@ -69,7 +69,7 @@ setDecimal =
 
 brk : Int
 brk =
-    32
+    16
 
 
 setBrk : Bool -> Int -> Int
