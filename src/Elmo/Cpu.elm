@@ -264,9 +264,6 @@ process system instruction =
         XAA ->
             instruction |> xaa system
 
-        _ ->
-            system
-
 
 
 -- INSTRUCTIONS
