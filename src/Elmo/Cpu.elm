@@ -205,6 +205,10 @@ process system instruction =
         NOP ->
             instruction |> nop system
 
+        {- This matches all the illegal instructions. -}
+        ILL ->
+            instruction |> ill system
+
         {- Instructions that are unused on 2A03, but still present on 6502. -}
         AHX ->
             instruction |> ahx system
@@ -220,9 +224,6 @@ process system instruction =
 
         DCP ->
             instruction |> dcp system
-
-        ILL ->
-            instruction |> ill system
 
         ISC ->
             instruction |> isc system
@@ -1241,6 +1242,15 @@ nop system instruction =
     system
 
 
+{-| This handle illegal instructions.
+
+For now they are no-operations, but I may do something else in the future.
+-}
+ill : System -> Instruction -> System
+ill =
+    nop
+
+
 
 -- UNUSED
 
@@ -1262,10 +1272,6 @@ axs =
 
 
 dcp =
-    nop
-
-
-ill =
     nop
 
 
