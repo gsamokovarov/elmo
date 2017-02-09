@@ -6,18 +6,24 @@ import Bitwise
 
 
 type alias Memory =
-    Array Int
+    { ram : Array Int
+    }
 
 
 initialize : Memory
 initialize =
-    Array.repeat 2048 0
+    { ram = Array.repeat 2048 0
+    }
 
 
 read : Int -> Memory -> Int
 read address memory =
-    Maybe.withDefault 0 <|
-        Array.get address memory
+    if address < 0x2000 then
+        memory.ram
+            |> Array.get (address % 2048)
+            |> Maybe.withDefault 0
+    else
+        0
 
 
 read16 : Int -> Memory -> Int
@@ -39,4 +45,4 @@ read16i address memory =
 
 write : Int -> Int -> Memory -> Memory
 write address value memory =
-    Array.set address value memory
+    { memory | ram = Array.set address value memory.ram }
