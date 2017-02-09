@@ -187,6 +187,9 @@ process system instruction =
         TAX ->
             instruction |> tax system
 
+        TAY ->
+            instruction |> tay system
+
         NOP ->
             instruction |> nop system
 
@@ -1130,7 +1133,7 @@ sty ({ cpu, memory } as system) { address } =
     { system | memory = memory |> Memory.write address cpu.y }
 
 
-{-| Store register Y in memory.
+{-| Transfer accumulator to register X.
 -}
 tax : System -> Instruction -> System
 tax ({ cpu } as system) { address } =
@@ -1138,6 +1141,22 @@ tax ({ cpu } as system) { address } =
         | cpu =
             { cpu
                 | x = cpu.a
+                , p =
+                    cpu.p
+                        |> Flags.setSign cpu.a
+                        |> Flags.setZero cpu.a
+            }
+    }
+
+
+{-| Transfer accumulator to register Y.
+-}
+tay : System -> Instruction -> System
+tay ({ cpu } as system) { address } =
+    { system
+        | cpu =
+            { cpu
+                | y = cpu.a
                 , p =
                     cpu.p
                         |> Flags.setSign cpu.a
