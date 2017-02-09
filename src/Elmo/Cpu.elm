@@ -42,6 +42,9 @@ tick ({ cpu, memory } as system) =
 
 process : System -> Instruction -> System
 process system instruction =
+    {- TODO(genadi): May wanna switch the arguments, so we don't need to flip
+       the instructions while chaining them like in BRK.
+    -}
     case instruction.label of
         ADC ->
             instruction |> adc system
