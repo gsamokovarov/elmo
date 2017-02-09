@@ -190,11 +190,14 @@ process system instruction =
         TAY ->
             instruction |> tay system
 
+        TSX ->
+            instruction |> tsx system
+
         TXA ->
             instruction |> txa system
 
-        TSX ->
-            instruction |> tsx system
+        TXS ->
+            instruction |> txs system
 
         NOP ->
             instruction |> nop system
@@ -1201,6 +1204,13 @@ txa ({ cpu } as system) { address } =
                         |> Flags.setZero cpu.x
             }
     }
+
+
+{-| Transfer register X to stack pointer.
+-}
+txs : System -> Instruction -> System
+txs ({ cpu } as system) { address } =
+    { system | cpu = { cpu | sp = cpu.x } }
 
 
 {-| No-operation instruction.
