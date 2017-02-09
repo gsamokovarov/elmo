@@ -184,6 +184,9 @@ process system instruction =
         STY ->
             instruction |> sty system
 
+        TAX ->
+            instruction |> tax system
+
         NOP ->
             instruction |> nop system
 
@@ -1125,6 +1128,22 @@ stx ({ cpu, memory } as system) { address } =
 sty : System -> Instruction -> System
 sty ({ cpu, memory } as system) { address } =
     { system | memory = memory |> Memory.write address cpu.y }
+
+
+{-| Store register Y in memory.
+-}
+tax : System -> Instruction -> System
+tax ({ cpu } as system) { address } =
+    { system
+        | cpu =
+            { cpu
+                | x = cpu.a
+                , p =
+                    cpu.p
+                        |> Flags.setSign cpu.a
+                        |> Flags.setZero cpu.a
+            }
+    }
 
 
 {-| No-operation instruction.
