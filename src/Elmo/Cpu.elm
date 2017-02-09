@@ -199,6 +199,9 @@ process system instruction =
         TXS ->
             instruction |> txs system
 
+        TYA ->
+            instruction |> tya system
+
         NOP ->
             instruction |> nop system
 
@@ -1211,6 +1214,22 @@ txa ({ cpu } as system) { address } =
 txs : System -> Instruction -> System
 txs ({ cpu } as system) { address } =
     { system | cpu = { cpu | sp = cpu.x } }
+
+
+{-| Transfer register Y to accumulator.
+-}
+tya : System -> Instruction -> System
+tya ({ cpu } as system) { address } =
+    { system
+        | cpu =
+            { cpu
+                | a = cpu.y
+                , p =
+                    cpu.p
+                        |> Flags.setSign cpu.y
+                        |> Flags.setZero cpu.y
+            }
+    }
 
 
 {-| No-operation instruction.
