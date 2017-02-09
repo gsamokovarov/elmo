@@ -73,6 +73,9 @@ process system instruction =
         BPL ->
             instruction |> bpl system
 
+        BRK ->
+            instruction |> brk system
+
         BVC ->
             instruction |> bvc system
 
@@ -493,6 +496,26 @@ bpl ({ cpu } as system) { address, branchPageCycles } =
         }
     else
         system
+
+
+{-| Force break, a software interrupt.
+-}
+brk : System -> Instruction -> System
+brk ({ cpu, memory } as system) instruction =
+    let
+        systemAfterStackPush =
+            system
+                |> Stack.push16 cpu.pc
+                |> (flip php) instruction
+                |> (flip sei) instruction
+    in
+        { systemAfterStackPush
+            | cpu =
+                { cpu
+                    | pc =
+                        memory |> Memory.read16 0xFFFE
+                }
+        }
 
 
 {-| Branch on overflow zero.
