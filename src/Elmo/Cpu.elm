@@ -157,6 +157,9 @@ process system instruction =
         ROR ->
             instruction |> ror system
 
+        RTI ->
+            instruction |> rti system
+
         NOP ->
             instruction |> nop system
 
@@ -998,6 +1001,24 @@ ror ({ cpu, memory } as system) { address, mode } =
                     , memory =
                         memory |> Memory.write address (value >>> 1)
                 }
+
+
+rti : System -> Instruction -> System
+rti ({ cpu } as system) instruction =
+    let
+        ( systemAfterPull, status ) =
+            system |> Stack.pull
+
+        ( systemAfterDoublePull, pc ) =
+            system |> Stack.pull16
+    in
+        { systemAfterDoublePull
+            | cpu =
+                { cpu
+                    | p = status
+                    , pc = pc
+                }
+        }
 
 
 {-| No-operation instruction.
