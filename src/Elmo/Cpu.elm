@@ -160,6 +160,9 @@ process system instruction =
         RTI ->
             instruction |> rti system
 
+        RTS ->
+            instruction |> rts system
+
         NOP ->
             instruction |> nop system
 
@@ -1003,6 +1006,8 @@ ror ({ cpu, memory } as system) { address, mode } =
                 }
 
 
+{-| Return from interrupt.
+-}
 rti : System -> Instruction -> System
 rti ({ cpu } as system) instruction =
     let
@@ -1019,6 +1024,17 @@ rti ({ cpu } as system) instruction =
                     , pc = pc
                 }
         }
+
+
+{-| Return from subroutine.
+-}
+rts : System -> Instruction -> System
+rts ({ cpu } as system) instruction =
+    let
+        ( systemAfterDoublePull, pc ) =
+            system |> Stack.pull16
+    in
+        { systemAfterDoublePull | cpu = { cpu | pc = pc } }
 
 
 {-| No-operation instruction.
