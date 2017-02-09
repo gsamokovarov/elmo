@@ -166,6 +166,9 @@ process system instruction =
         SBC ->
             instruction |> sbc system
 
+        SEC ->
+            instruction |> sec system
+
         NOP ->
             instruction |> nop system
 
@@ -1065,6 +1068,13 @@ sbc ({ cpu, memory } as system) { address } =
                 |> Flags.setOverflow overflow
     in
         { system | cpu = { cpu | a = accumulator, p = flags } }
+
+
+{-| Set carry flag.
+-}
+sec : System -> Instruction -> System
+sec ({ cpu } as system) instruction =
+    { system | cpu = { cpu | p = cpu.p ||| Flags.carry } }
 
 
 {-| No-operation instruction.
