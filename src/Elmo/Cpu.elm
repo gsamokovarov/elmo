@@ -154,6 +154,9 @@ process system instruction =
         ROL ->
             instruction |> rol system
 
+        ROR ->
+            instruction |> ror system
+
         NOP ->
             instruction |> nop system
 
@@ -938,6 +941,62 @@ rol ({ cpu, memory } as system) { address, mode } =
                         }
                     , memory =
                         memory |> Memory.write address value
+                }
+
+
+{-| Rotate memory or accumulator one bit right.
+-}
+ror : System -> Instruction -> System
+ror ({ cpu, memory } as system) { address, mode } =
+    case mode of
+        Accumulator ->
+            let
+                value =
+                    if (cpu.p &&& Flags.carry) == Flags.carry then
+                        cpu.a ||| 0x0100
+                    else
+                        cpu.a
+
+                carry =
+                    (cpu.a &&& (cpu.p &&& Flags.carry)) == Flags.carry
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | a = value >>> 1
+                            , p =
+                                cpu.p
+                                    |> Flags.setCarry carry
+                                    |> Flags.setSign (value >>> 1)
+                                    |> Flags.setZero (value >>> 1)
+                        }
+                }
+
+        _ ->
+            let
+                raw =
+                    memory |> Memory.read address
+
+                value =
+                    if (cpu.p &&& Flags.carry) == Flags.carry then
+                        raw ||| 0x0100
+                    else
+                        raw
+
+                carry =
+                    (raw &&& (cpu.p &&& Flags.carry)) == Flags.carry
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | p =
+                                cpu.p
+                                    |> Flags.setCarry carry
+                                    |> Flags.setSign (value >>> 1)
+                                    |> Flags.setZero (value >>> 1)
+                        }
+                    , memory =
+                        memory |> Memory.write address (value >>> 1)
                 }
 
 
