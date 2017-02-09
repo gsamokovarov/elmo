@@ -190,6 +190,9 @@ process system instruction =
         TAY ->
             instruction |> tay system
 
+        TSX ->
+            instruction |> tsx system
+
         NOP ->
             instruction |> nop system
 
@@ -1161,6 +1164,22 @@ tay ({ cpu } as system) { address } =
                     cpu.p
                         |> Flags.setSign cpu.a
                         |> Flags.setZero cpu.a
+            }
+    }
+
+
+{-| Transfer stack pointer to register Y.
+-}
+tsx : System -> Instruction -> System
+tsx ({ cpu } as system) { address } =
+    { system
+        | cpu =
+            { cpu
+                | x = cpu.sp
+                , p =
+                    cpu.p
+                        |> Flags.setSign cpu.sp
+                        |> Flags.setZero cpu.sp
             }
     }
 
