@@ -163,6 +163,9 @@ process system instruction =
         RTS ->
             instruction |> rts system
 
+        SBC ->
+            instruction |> sbc system
+
         NOP ->
             instruction |> nop system
 
@@ -1035,6 +1038,33 @@ rts ({ cpu } as system) instruction =
             system |> Stack.pull16
     in
         { systemAfterDoublePull | cpu = { cpu | pc = pc } }
+
+
+{-| Subtract memory from accumulator with borrow.
+-}
+sbc : System -> Instruction -> System
+sbc ({ cpu, memory } as system) { address } =
+    let
+        value =
+            memory |> Memory.read address
+
+        sub =
+            cpu.a - value - (1 - (cpu.p &&& Flags.carry))
+
+        accumulator =
+            0xFF &&& sub
+
+        overflow =
+            ((cpu.a ^^^ sub) &&& (value ^^^ sub) &&& 0x80) /= 0
+
+        flags =
+            cpu.p
+                |> Flags.setSign accumulator
+                |> Flags.setZero accumulator
+                |> Flags.setCarry (sub < 0)
+                |> Flags.setOverflow overflow
+    in
+        { system | cpu = { cpu | a = accumulator, p = flags } }
 
 
 {-| No-operation instruction.
