@@ -8,7 +8,7 @@ Unit). However, it lacks Binary Coded Decimal mode.
 import Elmo.Memory as Memory exposing (Memory)
 import Elmo.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Instruction as Instruction exposing (Instruction)
-import Elmo.Types exposing (System, Interrupt, Cpu)
+import Elmo.Types exposing (System, Interrupt(..), Cpu)
 import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), (>>>), pageCrossed, count)
 import Elmo.Stack as Stack
 import Elmo.Flags as Flags
@@ -22,26 +22,47 @@ tick ({ cpu, memory } as system) =
     else
         let
             instruction =
-                Instruction.dispatch system
-
-            systemAfterPcAndCyclesUpdate =
-                { system
-                    | cpu =
-                        { cpu
-                            | pc = cpu.pc + instruction.bytes
-                            , cycles =
-                                cpu.cycles
-                                    + instruction.cycles
-                                    + (count instruction.pageCrossed)
-                        }
-                }
+                system |> Instruction.dispatch
         in
-            {- We still need to handle interrupts here. -}
-            instruction |> process systemAfterPcAndCyclesUpdate
+            system
+                |> processInterrupt
+                |> processCounters instruction
+                |> processInstruction instruction
 
 
-process : System -> Instruction -> System
-process system instruction =
+
+-- INTERNAL
+
+
+processInterrupt : System -> System
+processInterrupt ({ cpu } as system) =
+    case cpu.interrupt of
+        Nothing ->
+            system
+
+        Just NMI ->
+            system |> nmi
+
+        Just IRQ ->
+            system |> irq
+
+
+processCounters : Instruction -> System -> System
+processCounters instruction ({ cpu } as system) =
+    { system
+        | cpu =
+            { cpu
+                | pc = cpu.pc + instruction.bytes
+                , cycles =
+                    cpu.cycles
+                        + instruction.cycles
+                        + (count instruction.pageCrossed)
+            }
+    }
+
+
+processInstruction : Instruction -> System -> System
+processInstruction instruction system =
     {- TODO(genadi): May wanna switch the arguments, so we don't need to flip
        the instructions while chaining them like in BRK.
     -}
@@ -123,6 +144,9 @@ process system instruction =
 
         INX ->
             instruction |> inx system
+
+        INY ->
+            instruction |> iny system
 
         JMP ->
             instruction |> jmp system
@@ -216,6 +240,9 @@ process system instruction =
             instruction |> ill system
 
         {- Instructions that are unused on 2A03, but still present on 6502. -}
+        ANC ->
+            instruction |> anc system
+
         AHX ->
             instruction |> ahx system
 
@@ -266,6 +293,50 @@ process system instruction =
 
         XAA ->
             instruction |> xaa system
+
+
+
+-- INTERRUPTS
+
+
+{-| Non-maskable interrupt.
+-}
+nmi : System -> System
+nmi ({ cpu, memory } as system) =
+    let
+        systemAfterPush =
+            system
+                |> Stack.push16 cpu.pc
+                |> Stack.push cpu.p
+    in
+        { systemAfterPush
+            | cpu =
+                { cpu
+                    | pc = memory |> Memory.read16 0xFFFA
+                    , p = cpu.p ||| Flags.interrupt
+                    , cycles = cpu.cycles + 7
+                }
+        }
+
+
+{-| IRQ interrupt.
+-}
+irq : System -> System
+irq ({ cpu, memory } as system) =
+    let
+        systemAfterPush =
+            system
+                |> Stack.push16 cpu.pc
+                |> Stack.push cpu.p
+    in
+        { systemAfterPush
+            | cpu =
+                { cpu
+                    | pc = memory |> Memory.read16 0xFFFE
+                    , p = cpu.p ||| Flags.interrupt
+                    , cycles = cpu.cycles + 7
+                }
+        }
 
 
 
@@ -1277,6 +1348,9 @@ ill =
 
 -- UNUSED
 
+anc =
+    nop
+
 
 ahx =
     nop
@@ -1296,7 +1370,6 @@ axs =
 
 dcp =
     nop
-
 
 isc =
     nop
