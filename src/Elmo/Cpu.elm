@@ -172,6 +172,12 @@ process system instruction =
         SED ->
             instruction |> sed system
 
+        SEI ->
+            instruction |> sei system
+
+        STA ->
+            instruction |> sta system
+
         NOP ->
             instruction |> nop system
 
@@ -1085,6 +1091,20 @@ sec ({ cpu } as system) instruction =
 sed : System -> Instruction -> System
 sed ({ cpu } as system) instruction =
     { system | cpu = { cpu | p = cpu.p ||| Flags.decimal } }
+
+
+{-| Set decimal flag.
+-}
+sei : System -> Instruction -> System
+sei ({ cpu } as system) instruction =
+    { system | cpu = { cpu | p = cpu.p ||| Flags.interrupt } }
+
+
+{-| Store accumulator in memory.
+-}
+sta : System -> Instruction -> System
+sta ({ cpu, memory } as system) { address } =
+    { system | memory = memory |> Memory.write address cpu.a }
 
 
 {-| No-operation instruction.
