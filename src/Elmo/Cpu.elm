@@ -178,6 +178,9 @@ process system instruction =
         STA ->
             instruction |> sta system
 
+        STX ->
+            instruction |> stx system
+
         NOP ->
             instruction |> nop system
 
@@ -1105,6 +1108,13 @@ sei ({ cpu } as system) instruction =
 sta : System -> Instruction -> System
 sta ({ cpu, memory } as system) { address } =
     { system | memory = memory |> Memory.write address cpu.a }
+
+
+{-| Store register X in memory.
+-}
+stx : System -> Instruction -> System
+stx ({ cpu, memory } as system) { address } =
+    { system | memory = memory |> Memory.write address cpu.x }
 
 
 {-| No-operation instruction.
