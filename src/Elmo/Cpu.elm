@@ -151,6 +151,9 @@ process system instruction =
         PLP ->
             instruction |> plp system
 
+        ROL ->
+            instruction |> rol system
+
         NOP ->
             instruction |> nop system
 
@@ -894,6 +897,48 @@ plp ({ cpu } as system) instruction =
             system |> Stack.pull
     in
         { systemAfterPull | cpu = { cpu | p = value } }
+
+
+{-| Rotate memory or accumulator one bit left.
+-}
+rol : System -> Instruction -> System
+rol ({ cpu, memory } as system) { address, mode } =
+    case mode of
+        Accumulator ->
+            let
+                value =
+                    (cpu.a <<< 1) ||| (cpu.p &&& Flags.carry)
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | a = value
+                            , p =
+                                cpu.p
+                                    |> Flags.setCarry (value > 0xFF)
+                                    |> Flags.setSign value
+                                    |> Flags.setZero value
+                        }
+                }
+
+        _ ->
+            let
+                value =
+                    ((memory |> Memory.read address) <<< 1)
+                        ||| (cpu.p &&& Flags.carry)
+            in
+                { system
+                    | cpu =
+                        { cpu
+                            | p =
+                                cpu.p
+                                    |> Flags.setCarry (value > 0xFF)
+                                    |> Flags.setSign value
+                                    |> Flags.setZero value
+                        }
+                    , memory =
+                        memory |> Memory.write address value
+                }
 
 
 {-| No-operation instruction.
