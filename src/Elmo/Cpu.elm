@@ -169,6 +169,9 @@ process system instruction =
         SEC ->
             instruction |> sec system
 
+        SED ->
+            instruction |> sed system
+
         NOP ->
             instruction |> nop system
 
@@ -1075,6 +1078,13 @@ sbc ({ cpu, memory } as system) { address } =
 sec : System -> Instruction -> System
 sec ({ cpu } as system) instruction =
     { system | cpu = { cpu | p = cpu.p ||| Flags.carry } }
+
+
+{-| Set decimal flag.
+-}
+sed : System -> Instruction -> System
+sed ({ cpu } as system) instruction =
+    { system | cpu = { cpu | p = cpu.p ||| Flags.decimal } }
 
 
 {-| No-operation instruction.
