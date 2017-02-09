@@ -190,6 +190,9 @@ process system instruction =
         TAY ->
             instruction |> tay system
 
+        TXA ->
+            instruction |> txa system
+
         TSX ->
             instruction |> tsx system
 
@@ -1168,7 +1171,7 @@ tay ({ cpu } as system) { address } =
     }
 
 
-{-| Transfer stack pointer to register Y.
+{-| Transfer stack pointer to register X.
 -}
 tsx : System -> Instruction -> System
 tsx ({ cpu } as system) { address } =
@@ -1180,6 +1183,22 @@ tsx ({ cpu } as system) { address } =
                     cpu.p
                         |> Flags.setSign cpu.sp
                         |> Flags.setZero cpu.sp
+            }
+    }
+
+
+{-| Transfer register X to accumulator.
+-}
+txa : System -> Instruction -> System
+txa ({ cpu } as system) { address } =
+    { system
+        | cpu =
+            { cpu
+                | a = cpu.x
+                , p =
+                    cpu.p
+                        |> Flags.setSign cpu.x
+                        |> Flags.setZero cpu.x
             }
     }
 
