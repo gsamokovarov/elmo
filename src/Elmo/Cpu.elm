@@ -15,6 +15,20 @@ import Elmo.Flags as Flags
 import Bitwise
 
 
+init : Int -> Cpu
+init pc =
+    { pc = pc
+    , sp = 0xFD
+    , a = 0
+    , x = 0
+    , y = 0
+    , p = Flags.init
+    , interrupt = Nothing
+    , stall = 0
+    , cycles = 0
+    }
+
+
 tick : System -> System
 tick ({ cpu, memory } as system) =
     if cpu.stall > 0 then
@@ -1348,6 +1362,7 @@ ill =
 
 -- UNUSED
 
+
 anc =
     nop
 
@@ -1370,6 +1385,7 @@ axs =
 
 dcp =
     nop
+
 
 isc =
     nop
