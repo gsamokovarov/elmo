@@ -20,7 +20,7 @@ init =
     {- In the initial state, the fifth byte, which is unused, is always up.
        0b0010_0000
     -}
-    32
+    0x20
 
 
 
@@ -29,7 +29,7 @@ init =
 
 carry : Int
 carry =
-    1
+    0x01
 
 
 setCarry : Bool -> Int -> Int
@@ -39,7 +39,7 @@ setCarry =
 
 zero : Int
 zero =
-    2
+    0x02
 
 
 setZero : Int -> Int -> Int
@@ -49,7 +49,7 @@ setZero value =
 
 interrupt : Int
 interrupt =
-    4
+    0x04
 
 
 setInterrupt : Bool -> Int -> Int
@@ -59,7 +59,7 @@ setInterrupt =
 
 decimal : Int
 decimal =
-    8
+    0x08
 
 
 setDecimal : Bool -> Int -> Int
@@ -69,7 +69,7 @@ setDecimal =
 
 brk : Int
 brk =
-    16
+    0x10
 
 
 setBrk : Bool -> Int -> Int
@@ -79,7 +79,7 @@ setBrk =
 
 overflow : Int
 overflow =
-    64
+    0x40
 
 
 setOverflow : Bool -> Int -> Int
@@ -89,7 +89,7 @@ setOverflow =
 
 sign : Int
 sign =
-    128
+    0x80
 
 
 setSign : Int -> Int -> Int
