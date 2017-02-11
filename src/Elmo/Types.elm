@@ -12,6 +12,7 @@ import Elmo.Memory as Memory exposing (Memory)
 type alias System =
     { cpu : Cpu
     , memory : Memory
+    , ppu : Ppu
     }
 
 
@@ -34,4 +35,25 @@ type alias Cpu =
     , interrupt : Maybe Interrupt
     , stall : Int
     , cycles : Int
+    }
+
+
+
+-- PPU
+
+
+type alias Ppu =
+    { ppuctrl : Int
+    , ppumask : Int
+    , ppustatus : Int
+    , oamaddr : Int
+    , oamdata : Int
+    , ppuscroll : Int
+    , ppuaddr : Int
+    , ppudata : Int
+    , oamdma : Int
+    , v : Int
+    , t : Int
+    , x : Int
+    , w : Int
     }
