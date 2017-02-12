@@ -5,13 +5,13 @@ called 2A03. It can handle sound, having a pAPU (psuedo-Audio Processing
 Unit). However, it lacks Binary Coded Decimal mode.
 -}
 
+import Elmo.Cpu.Opcode as Opcode exposing (AddressingMode(..), Label(..))
+import Elmo.Cpu.Instruction as Instruction exposing (Instruction)
+import Elmo.Cpu.Flags as Flags
+import Elmo.Cpu.Stack as Stack
 import Elmo.Memory as Memory exposing (Memory)
-import Elmo.Opcode as Opcode exposing (AddressingMode(..), Label(..))
-import Elmo.Instruction as Instruction exposing (Instruction)
 import Elmo.Types exposing (System, Interrupt(..), Cpu)
 import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), (>>>), pageCrossed, count)
-import Elmo.Stack as Stack
-import Elmo.Flags as Flags
 import Bitwise
 
 

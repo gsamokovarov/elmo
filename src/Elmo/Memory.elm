@@ -10,8 +10,8 @@ type alias Memory =
     }
 
 
-initialize : Memory
-initialize =
+init : Memory
+init =
     { ram = Array.repeat 2048 0
     }
 

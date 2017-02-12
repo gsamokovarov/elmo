@@ -1,4 +1,4 @@
-module Elmo.Stack exposing (..)
+module Elmo.Cpu.Stack exposing (..)
 
 {-| For a detailed look on how the 6502 stack works, go to:
 https://wiki.nesdev.com/w/index.php/Stack

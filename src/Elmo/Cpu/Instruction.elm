@@ -1,8 +1,8 @@
-module Elmo.Instruction exposing (..)
+module Elmo.Cpu.Instruction exposing (..)
 
+import Elmo.Cpu.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
 import Elmo.Types exposing (System, Cpu)
 import Elmo.Memory as Memory exposing (Memory)
-import Elmo.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
 import Elmo.Utils exposing ((&&&), pageCrossed)
 
 

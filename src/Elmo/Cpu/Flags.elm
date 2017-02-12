@@ -1,4 +1,4 @@
-module Elmo.Flags exposing (..)
+module Elmo.Cpu.Flags exposing (..)
 
 {-| This module provide utilities for working with the status register.
 

@@ -1,6 +1,9 @@
 module Elmo.Types exposing (..)
 
 {-| Shared types across different Elmo modules.
+
+# Types
+@docs System, Interrupt, Cpu, Ppu
 -}
 
 import Elmo.Memory as Memory exposing (Memory)
@@ -9,6 +12,10 @@ import Elmo.Memory as Memory exposing (Memory)
 -- SYSTEM
 
 
+{-| Representation of the general NES system state.
+
+The instructions should accept this as their input and output, as most the instructions
+-}
 type alias System =
     { cpu : Cpu
     , memory : Memory
@@ -20,11 +27,28 @@ type alias System =
 -- CPU
 
 
+{-| CPU interrupt.
+
+# IRQ
+
+An interrupt request.
+
+See https://wiki.nesdev.com/w/index.php/IRQ
+
+# NMI
+
+Non-maskable interrupt. Connected to the PPU and used to detect vertical
+blanking.
+
+See https://wiki.nesdev.com/w/index.php/NMI
+-}
 type Interrupt
     = NMI
     | IRQ
 
 
+{-| Representation of the CPU state at a given time.
+-}
 type alias Cpu =
     { pc : Int
     , sp : Int
@@ -42,6 +66,8 @@ type alias Cpu =
 -- PPU
 
 
+{-| Representation of the PPU state at a given time.
+-}
 type alias Ppu =
     { ppuctrl : Int
     , ppumask : Int

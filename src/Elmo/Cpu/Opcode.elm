@@ -1,4 +1,4 @@
-module Elmo.Opcode exposing (..)
+module Elmo.Cpu.Opcode exposing (..)
 
 {-| Opcode dispatching code for the 2A03 CPU.
 
