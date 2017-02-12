@@ -56,4 +56,7 @@ type alias Ppu =
     , t : Int
     , x : Int
     , w : Int
+    , cycle : Int
+    , frame : Int
+    , scanLine : Int
     }
