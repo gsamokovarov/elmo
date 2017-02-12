@@ -1,2 +1,2 @@
 compile:
-	@elm make src/**/*.elm
+	@elm make src/Elmo.elm
