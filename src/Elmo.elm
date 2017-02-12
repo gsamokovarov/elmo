@@ -1,8 +1,17 @@
 module Elmo exposing (..)
 
-{-| Nintendo Entertainment System (NES) emulator written in Elm
-    for the web.
+{-| Elmo is a NES emulator written in Elm.
 
-    Check out http://wiki.nesdev.com/w/index.php/NES_reference_guide for
-    documentation.
+# Functions
+@docs init
 -}
+
+import Elmo.Types exposing (System)
+import Elmo.System as System
+
+
+{-| Initializes a NES system.
+-}
+init : System
+init =
+    System.init
