@@ -20,5 +20,5 @@ init =
     , w = 0
     , cycle = 0
     , frame = 0
-    , scanLine = 0
+    , scanline = 0
     }

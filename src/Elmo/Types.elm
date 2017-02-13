@@ -14,7 +14,8 @@ import Elmo.Memory as Memory exposing (Memory)
 
 {-| Representation of the general NES system state.
 
-The instructions should accept this as their input and output, as most the instructions
+The instructions should accept this as their input and output, as most them
+touch up on multiple components.
 -}
 type alias System =
     { cpu : Cpu
@@ -84,5 +85,5 @@ type alias Ppu =
     , w : Int
     , cycle : Int
     , frame : Int
-    , scanLine : Int
+    , scanline : Int
     }
