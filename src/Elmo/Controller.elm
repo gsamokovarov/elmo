@@ -5,10 +5,11 @@ module Elmo.Controller exposing (..)
 The gamepads are written to 0x4016 for gamepad 1 and 0x4017 for gamepad 2. This
 is the format.
 
-bit:   	 7     6     5     4     3     2     1     0
-button:	 A     B  Select Start  Up   Down  Left  Right
+Read # |    1      2      3      4      5      6      7      8
+-------+---------------------------------------------------------
+Button |    A      B   SELECT   START   UP    DOWN   LEFT  RIGHT
 
-See https://wiki.nesdev.com/w/index.php/Controller_Reading
+See http://fms.komkon.org/EMUL8/NES.html#LABB
 -}
 
 
