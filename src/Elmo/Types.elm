@@ -87,3 +87,13 @@ type alias Ppu =
     , frame : Int
     , scanline : Int
     }
+
+
+
+-- MEMORY
+
+
+{-| Representation of linear memory. Needed by the CPU and the PPU.
+-}
+type alias Memory =
+    Array Int
