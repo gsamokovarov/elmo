@@ -6,11 +6,16 @@ import Bitwise
 -- GENERAL
 
 
+{-| Checks whether and address is crossing  page boundaries.
+-}
 pageCrossed : Int -> Int -> Bool
 pageCrossed a b =
     (0xFF00 &&& a) /= (0xFF00 &&& b)
 
 
+{-| Counts a boolean expression as an integral 1 if True and 0 if False. Useful
+for adding or subtracting 0 or 1 based on the truthiness of an expression.
+-}
 count : Bool -> Int
 count bool =
     if bool then
