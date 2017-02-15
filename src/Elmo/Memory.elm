@@ -5,10 +5,6 @@ import Array exposing (Array)
 import Bitwise
 
 
-type alias Memory =
-    Array Int
-
-
 init : Memory
 init =
     Array.repeat 2048 0
