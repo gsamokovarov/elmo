@@ -21,5 +21,5 @@ init =
     , cycle = 0
     , frame = 0
     , scanline = 0
-    , latch
+    , latch = False
     }

@@ -86,6 +86,7 @@ type alias Ppu =
     , cycle : Int
     , frame : Int
     , scanline : Int
+    , latch : Bool
     }
 
 
