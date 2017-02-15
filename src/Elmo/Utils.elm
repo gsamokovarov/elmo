@@ -24,6 +24,16 @@ count bool =
         0
 
 
+{-| Set or clear a bit in an integral number.
+-}
+setBit : Int -> Bool -> Int -> Int
+setBit bit trigger flags =
+    if trigger then
+        flags ||| bit
+    else
+        flags &&& (0xFF ^^^ bit)
+
+
 
 -- OPERATORS
 
