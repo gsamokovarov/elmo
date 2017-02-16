@@ -4,7 +4,7 @@ module Elmo.Cpu.Stack exposing (..)
 https://wiki.nesdev.com/w/index.php/Stack
 -}
 
-import Elmo.Memory as Memory exposing (Memory)
+import Elmo.Memory as Memory
 import Elmo.Types exposing (System)
 import Elmo.Utils exposing ((&&&), (|||), (<<<), (>>>))
 

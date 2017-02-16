@@ -9,10 +9,9 @@ import Elmo.Cpu.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Cpu.Instruction as Instruction exposing (Instruction)
 import Elmo.Cpu.Flags as Flags
 import Elmo.Cpu.Stack as Stack
-import Elmo.Memory as Memory exposing (Memory)
+import Elmo.Memory as Memory
 import Elmo.Types exposing (System, Interrupt(..), Cpu)
 import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), (>>>), pageCrossed, count)
-import Bitwise
 
 
 init : Int -> Cpu

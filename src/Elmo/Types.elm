@@ -6,7 +6,7 @@ module Elmo.Types exposing (..)
 @docs System, Interrupt, Cpu, Ppu
 -}
 
-import Elmo.Memory as Memory exposing (Memory)
+import Array exposing (Array)
 
 
 -- SYSTEM
@@ -68,6 +68,12 @@ type alias Cpu =
 
 
 {-| Representation of the PPU state at a given time.
+
+For reference for the v, t, x, w registers, see
+http://wiki.nesdev.com/w/index.php/PPU_scrolling#PPU_registers
+
+For reference for the ppu and oam registers, see
+https://wiki.nesdev.com/w/index.php?title=PPU_registers
 -}
 type alias Ppu =
     { ppuctrl : Int
@@ -82,11 +88,12 @@ type alias Ppu =
     , v : Int
     , t : Int
     , x : Int
-    , w : Int
+    , w : Bool
     , cycle : Int
     , frame : Int
     , scanline : Int
-    , latch : Bool
+    , memory : Memory
+    , spriteMemory : Memory
     }
 
 
