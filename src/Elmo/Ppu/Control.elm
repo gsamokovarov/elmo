@@ -130,7 +130,7 @@ setSlave value =
 
 nmi : Int
 nmi =
-    0x40
+    0x80
 
 
 setNmi : Bool -> Int -> Int
