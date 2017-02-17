@@ -11,12 +11,17 @@ init =
     Array.repeat 2048 0
 
 
+at : Int -> Memory -> Int
+at address memory =
+    memory
+        |> Array.get (address % 2048)
+        |> Maybe.withDefault 0
+
+
 read : Int -> Memory -> Int
 read address memory =
     if address < 0x2000 then
-        memory
-            |> Array.get (address % 2048)
-            |> Maybe.withDefault 0
+        memory |> at address
     else
         0
 
