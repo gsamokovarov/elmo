@@ -1,4 +1,4 @@
-module Elmo.Ppu.Palette exposing (Palette, default)
+module Elmo.Ppu.Palette exposing (Palette, default, nesClassic)
 
 {-| A PPU color palette. It tries to decode a NTSC video signal and map its
 colors to RGB using one of the palettes defined in this module.
@@ -6,7 +6,7 @@ colors to RGB using one of the palettes defined in this module.
 See https://wiki.nesdev.com/w/index.php/PPU_palettes
 -}
 
-import Array
+import Array exposing (Array)
 
 
 {-| Palette is an array of 3-byte integers. The 3 bytes represent RGB color
@@ -86,6 +86,79 @@ default =
         , 0x00AEFACA
         , 0x00CAF3F3
         , 0x00BEBEB9
+        , 0x00
+        , 0x00
+        ]
+
+
+{-| This palette is the one found in the NES Classic mini console. It looks
+pretty good as well.
+-}
+nesClassic : Palette
+nesClassic =
+    Array.fromList
+        [ 0x0060615F
+        , 0x83
+        , 0x001D0195
+        , 0x00340875
+        , 0x0051055E
+        , 0x0056000F
+        , 0x004C0700
+        , 0x00372308
+        , 0x00203A0B
+        , 0x000F4B0E
+        , 0x00194C16
+        , 0x0002421E
+        , 0x00023154
+        , 0x00
+        , 0x00
+        , 0x00
+        , 0x00A9AAA8
+        , 0x00104BBF
+        , 0x004712D8
+        , 0x006300CA
+        , 0x008800A9
+        , 0x00930B46
+        , 0x008A2D04
+        , 0x006F5206
+        , 0x005C7114
+        , 0x001B8D12
+        , 0x00199509
+        , 0x00178448
+        , 0x00206B8E
+        , 0x00
+        , 0x00
+        , 0x00
+        , 0x00FBFBFB
+        , 0x006699F8
+        , 0x008974F9
+        , 0x00AB58F8
+        , 0x00D557EF
+        , 0x00DE5FA9
+        , 0x00DC7F59
+        , 0x00C7A224
+        , 0x00A7BE03
+        , 0x0075D703
+        , 0x0060E34F
+        , 0x003CD68D
+        , 0x0056C9CC
+        , 0x00414240
+        , 0x00
+        , 0x00
+        , 0x00FBFBFB
+        , 0x00BED4FA
+        , 0x00C9C7F9
+        , 0x00D7BEFA
+        , 0x00E8B8F9
+        , 0x00F5BAE5
+        , 0x00F3CAC2
+        , 0x00DFCDA7
+        , 0x00D9E09C
+        , 0x00C9EB9E
+        , 0x00C0EDB8
+        , 0x00B5F4C7
+        , 0x00B9EAE9
+        , 0x00ABABAB
         , 0x00
         , 0x00
         ]
