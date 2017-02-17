@@ -14,14 +14,14 @@ init =
 at : Int -> Memory -> Int
 at address memory =
     memory
-        |> Array.get (address % 2048)
+        |> Array.get address
         |> Maybe.withDefault 0
 
 
 read : Int -> Memory -> Int
 read address memory =
     if address < 0x2000 then
-        memory |> at address
+        memory |> at (address % 0x0800)
     else
         0
 
