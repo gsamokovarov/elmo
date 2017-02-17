@@ -34,6 +34,13 @@ setBit bit trigger flags =
         flags &&& (0xFF ^^^ bit)
 
 
+{-| Returns whether the nth bit is set or not
+-}
+nthBit : Int -> Int -> Bool
+nthBit bit n =
+    (n >>> bit) &&& 1 == 1
+
+
 
 -- OPERATORS
 
