@@ -85,6 +85,7 @@ type alias Ppu =
     , ppuaddr : Int
     , ppudata : Int
     , oamdma : Int
+    , ppudataBuffer : Int
     , v : Int
     , t : Int
     , x : Int

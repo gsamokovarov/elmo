@@ -15,6 +15,7 @@ init =
     , ppuaddr = 0
     , ppudata = 0
     , oamdma = 0
+    , ppudataBuffer = 0
     , v = 0
     , t = 0
     , x = 0
