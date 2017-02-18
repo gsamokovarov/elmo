@@ -9,7 +9,7 @@ import Elmo.Cpu.Opcode as Opcode exposing (AddressingMode(..), Label(..))
 import Elmo.Cpu.Instruction as Instruction exposing (Instruction)
 import Elmo.Cpu.Flags as Flags
 import Elmo.Cpu.Stack as Stack
-import Elmo.Memory as Memory
+import Elmo.Cpu.Ram as Ram
 import Elmo.Types exposing (System, Interrupt(..), Cpu)
 import Elmo.Utils exposing ((&&&), (|||), (^^^), (<<<), (>>>), pageCrossed, count)
 
@@ -29,7 +29,7 @@ init pc =
 
 
 tick : System -> System
-tick ({ cpu, memory } as system) =
+tick ({ cpu, ram } as system) =
     if cpu.stall > 0 then
         { system | cpu = { cpu | stall = cpu.stall - 1 } }
     else
@@ -315,7 +315,7 @@ processInstruction instruction system =
 {-| Non-maskable interrupt.
 -}
 nmi : System -> System
-nmi ({ cpu, memory } as system) =
+nmi ({ cpu, ram } as system) =
     let
         systemAfterPush =
             system
@@ -325,7 +325,7 @@ nmi ({ cpu, memory } as system) =
         { systemAfterPush
             | cpu =
                 { cpu
-                    | pc = memory |> Memory.read16 0xFFFA
+                    | pc = ram |> Ram.read16 0xFFFA
                     , p = cpu.p ||| Flags.interrupt
                     , cycles = cpu.cycles + 7
                 }
@@ -335,7 +335,7 @@ nmi ({ cpu, memory } as system) =
 {-| IRQ interrupt.
 -}
 irq : System -> System
-irq ({ cpu, memory } as system) =
+irq ({ cpu, ram } as system) =
     let
         systemAfterPush =
             system
@@ -345,7 +345,7 @@ irq ({ cpu, memory } as system) =
         { systemAfterPush
             | cpu =
                 { cpu
-                    | pc = memory |> Memory.read16 0xFFFE
+                    | pc = ram |> Ram.read16 0xFFFE
                     , p = cpu.p ||| Flags.interrupt
                     , cycles = cpu.cycles + 7
                 }
@@ -368,10 +368,10 @@ occurs if (M^result)&(N^result)&0x80 is nonzero. That is, if the sign of both
 inputs is different from the sign of the result.
 -}
 adc : System -> Instruction -> System
-adc ({ cpu, memory } as system) { address } =
+adc ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         sum =
             cpu.a + value + (cpu.p &&& Flags.carry)
@@ -392,13 +392,13 @@ adc ({ cpu, memory } as system) { address } =
         { system | cpu = { cpu | a = accumulator, p = flags } }
 
 
-{-| Logical and with memory address and accumulator.
+{-| Logical and with ram address and accumulator.
 -}
 and : System -> Instruction -> System
-and ({ cpu, memory } as system) { address } =
+and ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         accumulator =
             cpu.a &&& value
@@ -411,10 +411,10 @@ and ({ cpu, memory } as system) { address } =
         { system | cpu = { cpu | a = accumulator, p = flags } }
 
 
-{-| Shift Left One Bit (Memory or Accumulator).
+{-| Shift Left One Bit (Ram or Accumulator).
 -}
 asl : System -> Instruction -> System
-asl ({ cpu, memory } as system) { mode, address } =
+asl ({ cpu, ram } as system) { mode, address } =
     case mode of
         Accumulator ->
             { system
@@ -432,7 +432,7 @@ asl ({ cpu, memory } as system) { mode, address } =
         _ ->
             let
                 value =
-                    memory |> Memory.read address
+                    ram |> Ram.read address
             in
                 { system
                     | cpu =
@@ -443,8 +443,8 @@ asl ({ cpu, memory } as system) { mode, address } =
                                     |> Flags.setSign value
                                     |> Flags.setZero value
                         }
-                    , memory =
-                        memory |> Memory.write address (value <<< 1)
+                    , ram =
+                        ram |> Ram.write address (value <<< 1)
                 }
 
 
@@ -505,13 +505,13 @@ beq ({ cpu } as system) { address, branchPageCycles } =
         system
 
 
-{-| Test bits in memory with accumulator.
+{-| Test bits in ram with accumulator.
 -}
 bit : System -> Instruction -> System
-bit ({ cpu, memory } as system) { address } =
+bit ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
     in
         { system
             | cpu =
@@ -585,7 +585,7 @@ bpl ({ cpu } as system) { address, branchPageCycles } =
 {-| Force break, a software interrupt.
 -}
 brk : System -> Instruction -> System
-brk ({ cpu, memory } as system) instruction =
+brk ({ cpu, ram } as system) instruction =
     let
         systemAfterStackPush =
             system
@@ -597,7 +597,7 @@ brk ({ cpu, memory } as system) instruction =
             | cpu =
                 { cpu
                     | pc =
-                        memory |> Memory.read16 0xFFFE
+                        ram |> Ram.read16 0xFFFE
                 }
         }
 
@@ -668,13 +668,13 @@ clv ({ cpu } as system) { address } =
     { system | cpu = { cpu | p = cpu.p |> Flags.setOverflow False } }
 
 
-{-| Compare memory and accumulator.
+{-| Compare ram and accumulator.
 -}
 cmp : System -> Instruction -> System
-cmp ({ cpu, memory } as system) { address } =
+cmp ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         div =
             (cpu.a - value) &&& 0xFF
@@ -691,13 +691,13 @@ cmp ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Compare memory and register X.
+{-| Compare ram and register X.
 -}
 cpx : System -> Instruction -> System
-cpx ({ cpu, memory } as system) { address } =
+cpx ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         div =
             (cpu.x - value) &&& 0xFF
@@ -714,13 +714,13 @@ cpx ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Compare memory and register Y.
+{-| Compare ram and register Y.
 -}
 cpy : System -> Instruction -> System
-cpy ({ cpu, memory } as system) { address } =
+cpy ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         div =
             (cpu.y - value) &&& 0xFF
@@ -737,13 +737,13 @@ cpy ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Decrement memory value by one.
+{-| Decrement ram value by one.
 -}
 dec : System -> Instruction -> System
-dec ({ cpu, memory } as system) { address } =
+dec ({ cpu, ram } as system) { address } =
     let
         value =
-            ((memory |> Memory.read address) - 1) &&& 0xFF
+            ((ram |> Ram.read address) - 1) &&& 0xFF
     in
         { system
             | cpu =
@@ -796,13 +796,13 @@ dey ({ cpu } as system) { address } =
         }
 
 
-{-| Exclusive or memory with accumulator.
+{-| Exclusive or ram with accumulator.
 -}
 eor : System -> Instruction -> System
-eor ({ cpu, memory } as system) { address } =
+eor ({ cpu, ram } as system) { address } =
     let
         value =
-            (memory |> Memory.read address) ^^^ cpu.a
+            (ram |> Ram.read address) ^^^ cpu.a
     in
         { system
             | cpu =
@@ -816,13 +816,13 @@ eor ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Increment memory value by one.
+{-| Increment ram value by one.
 -}
 inc : System -> Instruction -> System
-inc ({ cpu, memory } as system) { address } =
+inc ({ cpu, ram } as system) { address } =
     let
         value =
-            ((memory |> Memory.read address) + 1) &&& 0xFF
+            ((ram |> Ram.read address) + 1) &&& 0xFF
     in
         { system
             | cpu =
@@ -878,14 +878,14 @@ iny ({ cpu } as system) { address } =
 {-| Jump to new location.
 -}
 jmp : System -> Instruction -> System
-jmp ({ cpu, memory } as system) { address } =
-    { system | cpu = { cpu | pc = memory |> Memory.read address } }
+jmp ({ cpu, ram } as system) { address } =
+    { system | cpu = { cpu | pc = ram |> Ram.read address } }
 
 
 {-| Jump to new location saving return address.
 -}
 jsr : System -> Instruction -> System
-jsr ({ cpu, memory } as system) { address } =
+jsr ({ cpu, ram } as system) { address } =
     let
         systemAfterPush =
             system |> Stack.push16 (cpu.pc - 1)
@@ -893,13 +893,13 @@ jsr ({ cpu, memory } as system) { address } =
         { systemAfterPush | cpu = { cpu | pc = address } }
 
 
-{-| Load memory to the accumulator..
+{-| Load ram to the accumulator..
 -}
 lda : System -> Instruction -> System
-lda ({ cpu, memory } as system) { address } =
+lda ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
     in
         { system
             | cpu =
@@ -913,13 +913,13 @@ lda ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Load memory to register X.
+{-| Load ram to register X.
 -}
 ldx : System -> Instruction -> System
-ldx ({ cpu, memory } as system) { address } =
+ldx ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
     in
         { system
             | cpu =
@@ -933,13 +933,13 @@ ldx ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Load memory to register Y.
+{-| Load ram to register Y.
 -}
 ldy : System -> Instruction -> System
-ldy ({ cpu, memory } as system) { address } =
+ldy ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
     in
         { system
             | cpu =
@@ -953,10 +953,10 @@ ldy ({ cpu, memory } as system) { address } =
         }
 
 
-{-| Shift Left One Bit (Memory or Accumulator).
+{-| Shift Left One Bit (Ram or Accumulator).
 -}
 lsr : System -> Instruction -> System
-lsr ({ cpu, memory } as system) { mode, address } =
+lsr ({ cpu, ram } as system) { mode, address } =
     case mode of
         Accumulator ->
             { system
@@ -974,7 +974,7 @@ lsr ({ cpu, memory } as system) { mode, address } =
         _ ->
             let
                 value =
-                    memory |> Memory.read address
+                    ram |> Ram.read address
             in
                 { system
                     | cpu =
@@ -985,18 +985,18 @@ lsr ({ cpu, memory } as system) { mode, address } =
                                     |> Flags.setSign value
                                     |> Flags.setZero value
                         }
-                    , memory =
-                        memory |> Memory.write address (value >>> 1)
+                    , ram =
+                        ram |> Ram.write address (value >>> 1)
                 }
 
 
-{-| Logical inclusive or between memory and accumulator.
+{-| Logical inclusive or between ram and accumulator.
 -}
 ora : System -> Instruction -> System
-ora ({ cpu, memory } as system) { address } =
+ora ({ cpu, ram } as system) { address } =
     let
         value =
-            cpu.a ||| (memory |> Memory.read address)
+            cpu.a ||| (ram |> Ram.read address)
     in
         { system
             | cpu =
@@ -1055,10 +1055,10 @@ plp ({ cpu } as system) instruction =
         { systemAfterPull | cpu = { cpu | p = value } }
 
 
-{-| Rotate memory or accumulator one bit left.
+{-| Rotate ram or accumulator one bit left.
 -}
 rol : System -> Instruction -> System
-rol ({ cpu, memory } as system) { address, mode } =
+rol ({ cpu, ram } as system) { address, mode } =
     case mode of
         Accumulator ->
             let
@@ -1080,7 +1080,7 @@ rol ({ cpu, memory } as system) { address, mode } =
         _ ->
             let
                 value =
-                    ((memory |> Memory.read address) <<< 1)
+                    ((ram |> Ram.read address) <<< 1)
                         ||| (cpu.p &&& Flags.carry)
             in
                 { system
@@ -1092,15 +1092,15 @@ rol ({ cpu, memory } as system) { address, mode } =
                                     |> Flags.setSign value
                                     |> Flags.setZero value
                         }
-                    , memory =
-                        memory |> Memory.write address value
+                    , ram =
+                        ram |> Ram.write address value
                 }
 
 
-{-| Rotate memory or accumulator one bit right.
+{-| Rotate ram or accumulator one bit right.
 -}
 ror : System -> Instruction -> System
-ror ({ cpu, memory } as system) { address, mode } =
+ror ({ cpu, ram } as system) { address, mode } =
     case mode of
         Accumulator ->
             let
@@ -1128,7 +1128,7 @@ ror ({ cpu, memory } as system) { address, mode } =
         _ ->
             let
                 raw =
-                    memory |> Memory.read address
+                    ram |> Ram.read address
 
                 value =
                     if (cpu.p &&& Flags.carry) == Flags.carry then
@@ -1148,8 +1148,8 @@ ror ({ cpu, memory } as system) { address, mode } =
                                     |> Flags.setSign (value >>> 1)
                                     |> Flags.setZero (value >>> 1)
                         }
-                    , memory =
-                        memory |> Memory.write address (value >>> 1)
+                    , ram =
+                        ram |> Ram.write address (value >>> 1)
                 }
 
 
@@ -1184,13 +1184,13 @@ rts ({ cpu } as system) instruction =
         { systemAfterDoublePull | cpu = { cpu | pc = pc } }
 
 
-{-| Subtract memory from accumulator with borrow.
+{-| Subtract ram from accumulator with borrow.
 -}
 sbc : System -> Instruction -> System
-sbc ({ cpu, memory } as system) { address } =
+sbc ({ cpu, ram } as system) { address } =
     let
         value =
-            memory |> Memory.read address
+            ram |> Ram.read address
 
         sub =
             cpu.a - value - (1 - (cpu.p &&& Flags.carry))
@@ -1232,25 +1232,25 @@ sei ({ cpu } as system) instruction =
     { system | cpu = { cpu | p = cpu.p ||| Flags.interrupt } }
 
 
-{-| Store accumulator in memory.
+{-| Store accumulator in ram.
 -}
 sta : System -> Instruction -> System
-sta ({ cpu, memory } as system) { address } =
-    { system | memory = memory |> Memory.write address cpu.a }
+sta ({ cpu, ram } as system) { address } =
+    { system | ram = ram |> Ram.write address cpu.a }
 
 
-{-| Store register X in memory.
+{-| Store register X in ram.
 -}
 stx : System -> Instruction -> System
-stx ({ cpu, memory } as system) { address } =
-    { system | memory = memory |> Memory.write address cpu.x }
+stx ({ cpu, ram } as system) { address } =
+    { system | ram = ram |> Ram.write address cpu.x }
 
 
-{-| Store register Y in memory.
+{-| Store register Y in ram.
 -}
 sty : System -> Instruction -> System
-sty ({ cpu, memory } as system) { address } =
-    { system | memory = memory |> Memory.write address cpu.y }
+sty ({ cpu, ram } as system) { address } =
+    { system | ram = ram |> Ram.write address cpu.y }
 
 
 {-| Transfer accumulator to register X.

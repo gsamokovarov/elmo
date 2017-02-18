@@ -1,8 +1,8 @@
 module Elmo.Cpu.Instruction exposing (..)
 
 import Elmo.Cpu.Opcode as Opcode exposing (AddressingMode(..), Opcode, Label(..))
+import Elmo.Cpu.Ram as Ram
 import Elmo.Types exposing (System, Cpu)
-import Elmo.Memory as Memory
 import Elmo.Utils exposing ((&&&), pageCrossed)
 
 
@@ -11,11 +11,11 @@ type alias Instruction =
 
 
 dispatch : System -> Instruction
-dispatch { cpu, memory } =
+dispatch { cpu, ram } =
     let
         opcode =
-            memory
-                |> Memory.read cpu.pc
+            ram
+                |> Ram.read cpu.pc
                 |> Opcode.dispatch
     in
         case opcode.mode of
@@ -43,35 +43,35 @@ dispatch { cpu, memory } =
             ZeroPage ->
                 opcode
                     |> augment
-                        { address = memory |> Memory.read (cpu.pc + 1)
+                        { address = ram |> Ram.read (cpu.pc + 1)
                         , pageCrossed = False
                         }
 
             ZeroPageX ->
                 opcode
                     |> augment
-                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.x)
+                        { address = ram |> Ram.read ((cpu.pc + 1) + cpu.x)
                         , pageCrossed = False
                         }
 
             ZeroPageY ->
                 opcode
                     |> augment
-                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.y)
+                        { address = ram |> Ram.read ((cpu.pc + 1) + cpu.y)
                         , pageCrossed = False
                         }
 
             Absolute ->
                 opcode
                     |> augment
-                        { address = memory |> Memory.read ((cpu.pc + 1) + cpu.x)
+                        { address = ram |> Ram.read ((cpu.pc + 1) + cpu.x)
                         , pageCrossed = False
                         }
 
             AbsoluteX ->
                 let
                     address =
-                        memory |> Memory.read16 ((cpu.pc + 1) + cpu.x)
+                        ram |> Ram.read16 ((cpu.pc + 1) + cpu.x)
                 in
                     opcode
                         |> augment
@@ -82,7 +82,7 @@ dispatch { cpu, memory } =
             AbsoluteY ->
                 let
                     address =
-                        memory |> Memory.read16 ((cpu.pc + 1) + cpu.y)
+                        ram |> Ram.read16 ((cpu.pc + 1) + cpu.y)
                 in
                     opcode
                         |> augment
@@ -93,7 +93,7 @@ dispatch { cpu, memory } =
             Relative ->
                 let
                     offset =
-                        memory |> Memory.read (cpu.pc + 1)
+                        ram |> Ram.read (cpu.pc + 1)
 
                     address =
                         if offset < 0x80 then
@@ -110,33 +110,33 @@ dispatch { cpu, memory } =
             Indirect ->
                 let
                     address =
-                        memory |> Memory.read16 (cpu.pc + 1)
+                        ram |> Ram.read16 (cpu.pc + 1)
                 in
                     opcode
                         |> augment
-                            { address = memory |> Memory.read16i address
+                            { address = ram |> Ram.read16i address
                             , pageCrossed = False
                             }
 
             IndirectX ->
                 let
                     address =
-                        memory |> Memory.read (0xFF &&& (cpu.pc + 1 + cpu.x))
+                        ram |> Ram.read (0xFF &&& (cpu.pc + 1 + cpu.x))
                 in
                     opcode
                         |> augment
-                            { address = memory |> Memory.read16i address
+                            { address = ram |> Ram.read16i address
                             , pageCrossed = False
                             }
 
             IndirectY ->
                 let
                     address =
-                        memory |> Memory.read ((cpu.pc + 1) + cpu.y)
+                        ram |> Ram.read ((cpu.pc + 1) + cpu.y)
                 in
                     opcode
                         |> augment
-                            { address = memory |> Memory.read16i address
+                            { address = ram |> Ram.read16i address
                             , pageCrossed = pageCrossed (address - cpu.y) address
                             }
 

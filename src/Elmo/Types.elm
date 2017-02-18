@@ -19,7 +19,7 @@ touch up on multiple components.
 -}
 type alias System =
     { cpu : Cpu
-    , memory : Memory
+    , ram : Memory
     , ppu : Ppu
     }
 
@@ -93,8 +93,8 @@ type alias Ppu =
     , cycle : Int
     , frame : Int
     , scanline : Int
-    , memory : Memory
-    , spriteMemory : Memory
+    , vram : Memory
+    , spriteRam : Memory
     }
 
 

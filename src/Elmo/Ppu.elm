@@ -23,6 +23,6 @@ init =
     , cycle = 0
     , frame = 0
     , scanline = 0
-    , memory = Array.repeat 0 0x0800
-    , spriteMemory = Array.repeat 0 0x0100
+    , vram = Array.repeat 0 0x0800
+    , spriteRam = Array.repeat 0 0x0100
     }
