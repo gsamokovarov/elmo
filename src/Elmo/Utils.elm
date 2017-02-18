@@ -36,9 +36,9 @@ setBit bit trigger flags =
 
 {-| Returns whether the nth bit is set or not
 -}
-nthBit : Int -> Int -> Bool
-nthBit bit n =
-    (n >>> bit) &&& 1 == 1
+bitSet : Int -> Int -> Bool
+bitSet bit n =
+    (n &&& bit) == bit
 
 
 
