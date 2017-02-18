@@ -1,6 +1,7 @@
 module Elmo.Ppu exposing (..)
 
 import Elmo.Types exposing (Ppu)
+import Elmo.Memory as Memory
 import Array
 
 
@@ -23,6 +24,7 @@ init =
     , cycle = 0
     , frame = 0
     , scanline = 0
-    , vram = Array.repeat 0 0x0800
-    , spriteRam = Array.repeat 0 0x0100
+    , vram = Memory.init 0x0800
+    , spriteRam = Memory.init 0x0100
+    , paletteRam = Memory.init 0x20
     }
