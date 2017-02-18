@@ -6,14 +6,8 @@ colors to RGB using one of the palettes defined in this module.
 See https://wiki.nesdev.com/w/index.php/PPU_palettes
 -}
 
-import Array exposing (Array)
-
-
-{-| Palette is an array of 3-byte integers. The 3 bytes represent RGB color
-values.
--}
-type alias Palette =
-    Array Int
+import Elmo.Types exposing (Memory)
+import Array
 
 
 {-| The default palette is the PVM Style (FBX) palette from
@@ -21,7 +15,7 @@ http://www.firebrandx.com/nespalette.html. I have chosen this palette
 specifically, because it approximate the color of a Sony PVM CRT screen and
 match it to a digital display, since most of use use those nowadays.
 -}
-default : Palette
+default : Memory
 default =
     Array.fromList
         [ 0x00696964
@@ -94,7 +88,7 @@ default =
 {-| This palette is the one found in the NES Classic mini console. It looks
 pretty good as well.
 -}
-nesClassic : Palette
+nesClassic : Memory
 nesClassic =
     Array.fromList
         [ 0x0060615F
