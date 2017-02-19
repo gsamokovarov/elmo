@@ -24,7 +24,7 @@ init =
     , cycle = 0
     , frame = 0
     , scanline = 0
-    , vram = Memory.init 0x0800
+    , vRam = Memory.init 0x0800
     , spriteRam = Memory.init 0x0100
     , paletteRam = Memory.init 0x20
     }

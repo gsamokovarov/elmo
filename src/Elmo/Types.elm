@@ -93,7 +93,7 @@ type alias Ppu =
     , cycle : Int
     , frame : Int
     , scanline : Int
-    , vram : Memory
+    , vRam : Memory
     , spriteRam : Memory
     , paletteRam : Memory
     }
